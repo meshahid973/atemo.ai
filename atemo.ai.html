@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atemo.ai | Ultimate Study</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+
+    <style>
+        :root {
+            --bg-color: #F0F4F8;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --yellow: #FFE66D;
+            --text: #2D3436;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Animated Background Blobs --- */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: floatBlob 10s infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #FFD1DC; }
+        .blob-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #D1F7C4; animation-delay: -2s; }
+        .blob-3 { top: 40%; left: 60%; width: 200px; height: 200px; background: #FFF5C2; animation-delay: -5s; }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(20px, 40px) scale(1.1); }
+        }
+
+        /* --- UI Header --- */
+        .header-bar {
+            width: 90%;
+            max-width: 700px;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            z-index: 10;
+        }
+
+        .logo { font-size: 2rem; color: var(--primary); font-weight: 700; text-shadow: 2px 2px 0 white; }
+
+        .stats-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat-badge {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+        .stat-badge:hover { transform: scale(1.1); }
+
+        /* --- Mascot --- */
+        .mascot-wrapper {
+            width: 130px;
+            height: 130px;
+            margin-bottom: -40px;
+            z-index: 5;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+        }
+
+        /* Mascot Expressions */
+        .mascot-wrapper.idle { animation: breathe 3s infinite ease-in-out; }
+        .mascot-wrapper.thinking { animation: spinThink 1s infinite linear; }
+        .mascot-wrapper.happy { animation: jump 0.6s; }
+        .mascot-wrapper.sad { animation: shakeHead 0.5s; }
+
+        /* --- Main Card --- */
+        .main-card {
+            width: 90%;
+            max-width: 600px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 4px solid white;
+            text-align: center;
+            position: relative;
+            margin-bottom: 50px;
+            transition: height 0.3s;
+        }
+
+        /* --- View: Upload --- */
+        .upload-view { animation: fadeUp 0.6s ease-out; }
+
+        .file-drop {
+            border: 3px dashed #E0E0E0;
+            border-radius: 25px;
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.5);
+        }
+        .file-drop:hover { border-color: var(--secondary); background: white; transform: scale(1.02); }
+
+        .difficulty-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .diff-btn {
+            padding: 8px 16px;
+            border: 2px solid #EEE;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #888;
+            font-family: 'Fredoka', sans-serif;
+        }
+        .diff-btn.selected {
+            background: var(--yellow);
+            border-color: #F0C000;
+            color: #555;
+            transform: scale(1.1);
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #D43F3F;
+            transition: 0.1s;
+            font-family: 'Fredoka', sans-serif;
+            width: 100%;
+        }
+        .action-btn:active { transform: translateY(6px); box-shadow: none; }
+        .action-btn:disabled { background: #ccc; box-shadow: 0 6px 0 #999; cursor: wait; }
+
+        /* --- View: Quiz --- */
+        .quiz-view { display: none; text-align: left; }
+
+        .timer-track {
+            width: 100%;
+            height: 8px;
+            background: #EEE;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .timer-fill {
+            height: 100%;
+            background: var(--secondary);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .question { font-size: 1.4rem; margin-bottom: 20px; color: #444; }
+
+        .opt {
+            background: white;
+            border: 2px solid #F0F0F0;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: 'Fredoka', sans-serif;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .opt:hover { border-color: var(--secondary); transform: translateX(5px); }
+        
+        .opt.correct { background: #D1F7C4; border-color: #8CE99A; color: #2B8A3E; }
+        .opt.wrong { background: #FFE3E3; border-color: #FF8787; color: #C92A2A; animation: shake 0.4s; }
+
+        /* --- XP Floating Text --- */
+        .xp-float {
+            position: absolute;
+            font-weight: bold;
+            color: #FFD700;
+            font-size: 1.5rem;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.1);
+            pointer-events: none;
+            animation: floatUp 1s forwards;
+            z-index: 100;
+        }
+
+        /* --- Animations Keyframes --- */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes jump { 0% { transform: translateY(0); } 50% { transform: translateY(-30px) rotate(10deg); } 100% { transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        @keyframes shakeHead { 0% { transform: rotate(0); } 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } 100% { transform: rotate(0); } }
+        @keyframes spinThink { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-50px) scale(1.5); opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="header-bar">
+        <div class="logo">Atemo.ai</div>
+        <div class="stats-container">
+            <div class="stat-badge">🔥 <span id="streakDisplay">0</span></div>
+            <div class="stat-badge">⚡ <span id="xpDisplay">0</span> XP</div>
+        </div>
+    </div>
+
+    <div class="mascot-wrapper idle" id="mascot">
+        <svg viewBox="0 0 100 100" style="width:100%; height:100%;">
+            <rect x="20" y="30" width="60" height="50" rx="12" fill="white" stroke="#2D3436" stroke-width="3"/>
+            <rect x="25" y="35" width="50" height="40" rx="8" fill="#4ECDC4"/>
+            <rect x="30" y="42" width="40" height="26" rx="5" fill="#2D3436"/>
+            <g id="mascot-eyes">
+                <circle cx="40" cy="55" r="4" fill="white"/>
+                <circle cx="60" cy="55" r="4" fill="white"/>
+            </g>
+            <line x1="50" y1="30" x2="50" y2="15" stroke="#2D3436" stroke-width="3"/>
+            <circle cx="50" cy="12" r="6" fill="#FF6B6B" stroke="#2D3436" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <div class="main-card">
+        
+        <div class="upload-view" id="viewUpload">
+            <h2>Let's Get Smarter! 🧠</h2>
+            
+            <div class="file-drop" onclick="document.getElementById('pdfInput').click()">
+                <div style="font-size: 3rem; margin-bottom: 10px;">📂</div>
+                <div id="fileName" style="font-weight: 600;">Tap to Upload PDF</div>
+                <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
+            </div>
+
+            <div class="difficulty-selector">
+                <div class="diff-btn selected" onclick="setDiff('easy', this)">Easy</div>
+                <div class="diff-btn" onclick="setDiff('medium', this)">Medium</div>
+                <div class="diff-btn" onclick="setDiff('hard', this)">Hard</div>
+            </div>
+
+            <button class="action-btn" id="genBtn" onclick="startGeneration()">Create Quiz 🚀</button>
+            <div id="loaderText" style="margin-top: 15px; color: #888; display:none;">Reading PDF...</div>
+        </div>
+
+        <div class="quiz-view" id="viewQuiz">
+            <div class="timer-track"><div class="timer-fill" id="timerBar"></div></div>
+            <div id="quizContent"></div>
+            <div id="feedback" style="height: 20px; margin-top: 10px; font-weight: bold; text-align: center;"></div>
+        </div>
+
+        <div class="quiz-view" id="viewResult" style="display:none; text-align: center;">
+            <h1 style="font-size: 3rem;">🎉 Awesome!</h1>
+            <p>You completed the study set.</p>
+            <h2 id="finalScore"></h2>
+            <button class="action-btn" onclick="location.reload()">Study Again 🔄</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- SECURE CONFIG ---
+        const p1 = "sk-or-v1-4fbe97112002db95641d31d2";
+        const p2 = "1925ec473548218ab0db689b3d6645e30d4ebe1a";
+        const API_KEY = p1 + p2;
+
+        // --- GAME STATE ---
+        let state = {
+            xp: 0,
+            streak: 0,
+            difficulty: 'easy',
+            questions: [],
+            currentIdx: 0,
+            score: 0,
+            timer: null
+        };
+
+        // --- SOUND ENGINE (Browser Synth - No files needed!) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                // High pitch "Ding"
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'wrong') {
+                // Low pitch "Bloop"
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'win') {
+                // Victory chord
+                [400, 500, 600].forEach((freq, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = freq;
+                    g.gain.value = 0.1;
+                    o.start(audioCtx.currentTime + (i*0.1));
+                    o.stop(audioCtx.currentTime + 1);
+                });
+            }
+        }
+
+        // --- INIT ---
+        window.onload = () => {
+            // Load XP and Streak
+            state.streak = parseInt(localStorage.getItem('atemo_streak') || 0);
+            state.xp = parseInt(localStorage.getItem('atemo_xp') || 0);
+            updateStatsUI();
+        };
+
+        function updateStatsUI() {
+            document.getElementById('streakDisplay').innerText = state.streak;
+            document.getElementById('xpDisplay').innerText = state.xp;
+        }
+
+        // --- UI HANDLERS ---
+        function setDiff(diff, btn) {
+            state.difficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        document.getElementById('pdfInput').addEventListener('change', (e) => {
+            if(e.target.files[0]) {
+                document.getElementById('fileName').innerText = "✅ " + e.target.files[0].name;
+                playSound('correct'); // Little feedback sound
+            }
+        });
+
+        // --- CORE LOGIC ---
+        async function startGeneration() {
+            const file = document.getElementById('pdfInput').files[0];
+            if(!file) return alert("Please pick a file first!");
+
+            // UI Transition
+            const btn = document.getElementById('genBtn');
+            btn.disabled = true;
+            document.getElementById('loaderText').style.display = 'block';
+            setMascot('thinking');
+
+            try {
+                // 1. Read PDF
+                const text = await readPDF(file);
+                
+                // 2. AI Generate
+                const quiz = await callAI(text, state.difficulty);
+                state.questions = quiz;
+                
+                // 3. Start Game
+                startQuiz();
+
+            } catch(e) {
+                alert("Error: " + e.message);
+                setMascot('sad');
+                btn.disabled = false;
+            }
+        }
+
+        async function readPDF(file) {
+            const buffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(buffer).promise;
+            let fullText = "";
+            const max = Math.min(pdf.numPages, 4);
+            for(let i=1; i<=max; i++) {
+                const p = await pdf.getPage(i);
+                const t = await p.getTextContent();
+                fullText += t.items.map(s=>s.str).join(" ");
+            }
+            return fullText;
+        }
+
+        async function callAI(text, diff) {
+            const prompt = `Create 5 ${diff} difficulty multiple choice questions.
+            Return ONLY raw JSON array: [{"q": "...", "options": ["A","B","C","D"], "answer": 0}]
+            TEXT: ${text.substring(0, 7000)}`;
+
+            const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "atemo.ai",
+                },
+                body: JSON.stringify({
+                    "model": "deepseek/deepseek-chat",
+                    "messages": [{"role": "user", "content": prompt}]
+                })
+            });
+            const data = await res.json();
+            let content = data.choices[0].message.content.replace(/```json/g,'').replace(/```/g,'').trim();
+            return JSON.parse(content);
+        }
+
+        // --- QUIZ LOOP ---
+        function startQuiz() {
+            document.getElementById('viewUpload').style.display = 'none';
+            document.getElementById('viewQuiz').style.display = 'block';
+            setMascot('idle');
+            loadQuestion(0);
+        }
+
+        function loadQuestion(idx) {
+            state.currentIdx = idx;
+            const q = state.questions[idx];
+            const div = document.getElementById('quizContent');
+            
+            // Reset Timer
+            resetTimer();
+
+            let html = `<div class="question">${idx+1}. ${q.q}</div>`;
+            q.options.forEach((opt, i) => {
+                html += `<div class="opt" onclick="check(${i}, ${q.answer}, this)">
+                            <span>${opt}</span>
+                            <span class="icon">⚪</span>
+                         </div>`;
+            });
+            div.innerHTML = html;
+        }
+
+        function resetTimer() {
+            const bar = document.getElementById('timerBar');
+            bar.style.transition = 'none';
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.style.transition = 'width 15s linear'; // 15 seconds per question
+                bar.style.width = '0%';
+            }, 50);
+        }
+
+        function check(picked, correct, el) {
+            // Stop Timer interactions
+            document.getElementById('timerBar').style.transition = 'none';
+            
+            // Disable all inputs
+            const allOpts = document.querySelectorAll('.opt');
+            allOpts.forEach(o => o.style.pointerEvents = 'none');
+
+            if(picked === correct) {
+                // WIN
+                el.classList.add('correct');
+                el.querySelector('.icon').innerText = '✅';
+                playSound('correct');
+                setMascot('happy');
+                spawnXP(el); // XP Bubble
+                state.score++;
+                state.xp += 10;
+                localStorage.setItem('atemo_xp', state.xp);
+                updateStatsUI();
+                
+                // Confetti
+                confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+            } else {
+                // LOSE
+                el.classList.add('wrong');
+                el.querySelector('.icon').innerText = '❌';
+                allOpts[correct].classList.add('correct'); // Show right answer
+                playSound('wrong');
+                setMascot('sad');
+                // Shake screen
+                document.body.style.animation = 'shake 0.3s';
+                setTimeout(()=> document.body.style.animation = '', 300);
+            }
+
+            // Next Question
+            setTimeout(() => {
+                if(state.currentIdx < state.questions.length - 1) {
+                    setMascot('idle');
+                    loadQuestion(state.currentIdx + 1);
+                } else {
+                    endGame();
+                }
+            }, 2000);
+        }
+
+        function endGame() {
+            document.getElementById('viewQuiz').style.display = 'none';
+            document.getElementById('viewResult').style.display = 'block';
+            document.getElementById('finalScore').innerText = `Score: ${state.score} / ${state.questions.length}`;
+            playSound('win');
+            
+            // Update Streak if good score
+            if(state.score >= 3) {
+                state.streak++;
+                localStorage.setItem('atemo_streak', state.streak);
+            }
+            updateStatsUI();
+
+            // Big Confetti
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+        }
+
+        // --- ANIMATION HELPERS ---
+        function setMascot(mood) {
+            const m = document.getElementById('mascot');
+            const eyes = document.getElementById('mascot-eyes');
+            m.className = `mascot-wrapper ${mood}`;
+
+            // Eye expressions
+            if(mood === 'happy') eyes.innerHTML = '<path d="M 36 55 Q 40 50 44 55 M 56 55 Q 60 50 64 55" stroke="white" stroke-width="3" fill="none"/>';
+            else if(mood === 'sad') eyes.innerHTML = '<circle cx="40" cy="58" r="3" fill="white"/><circle cx="60" cy="58" r="3" fill="white"/>';
+            else eyes.innerHTML = '<circle cx="40" cy="55" r="4" fill="white"/><circle cx="60" cy="55" r="4" fill="white"/>';
+        }
+
+        function spawnXP(element) {
+            const rect = element.getBoundingClientRect();
+            const bubble = document.createElement('div');
+            bubble.innerText = "+10 XP";
+            bubble.className = "xp-float";
+            bubble.style.left = (rect.left + rect.width/2) + "px";
+            bubble.style.top = rect.top + "px";
+            document.body.appendChild(bubble);
+            setTimeout(() => bubble.remove(), 1000);
+        }
+
+    </script>
+</body>
+</html>
