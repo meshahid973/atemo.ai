@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atemo.ai | Ultimate Study</title>
+    <title>Atemo.ai | Master Your Studies</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -13,557 +13,760 @@
 
     <style>
         :root {
-            --bg-color: #F0F4F8;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --primary: #FF6B6B;
-            --secondary: #4ECDC4;
-            --yellow: #FFE66D;
-            --text: #2D3436;
-            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            /* Gizmo-Authentic Palette */
+            --bg: #F9FAFB;
+            --sidebar: #FFFFFF;
+            --card: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
+            --primary: #1F2937;
+            --primary-hover: #111827;
+            --accent: #10B981; /* Green for mastery */
+            --warning: #F59E0B; /* Orange for fire */
+            --error: #EF4444;
+            --ring-track: #F3F4F6;
+            --mascot-bg: #EEF2FF;
+            --mascot-stroke: #4F46E5;
         }
 
+        [data-theme="dark"] {
+            --bg: #0F172A;
+            --sidebar: #1E293B;
+            --card: #1E293B;
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --border: #334155;
+            --primary: #818CF8;
+            --primary-hover: #6366F1;
+            --ring-track: #334155;
+            --mascot-bg: #1E1B4B;
+            --mascot-stroke: #818CF8;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
         body {
-            font-family: 'Fredoka', sans-serif;
-            background: var(--bg-color);
-            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
             margin: 0;
-            min-height: 100vh;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-            position: relative;
+            gap: 8px;
+            flex-shrink: 0;
+            z-index: 20;
         }
 
-        /* --- Animated Background Blobs --- */
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(40px);
-            z-index: -1;
-            opacity: 0.6;
-            animation: floatBlob 10s infinite alternate;
+        .brand {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            color: var(--text-main);
+            margin-bottom: 32px;
+            display: flex; align-items: center; gap: 12px;
         }
-        .blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #FFD1DC; }
-        .blob-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #D1F7C4; animation-delay: -2s; }
-        .blob-3 { top: 40%; left: 60%; width: 200px; height: 200px; background: #FFF5C2; animation-delay: -5s; }
+        .brand-icon { font-size: 1.8rem; animation: pulse 2s infinite; }
 
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(20px, 40px) scale(1.1); }
-        }
-
-        /* --- UI Header --- */
-        .header-bar {
-            width: 90%;
-            max-width: 700px;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 0;
-            z-index: 10;
-        }
-
-        .logo { font-size: 2rem; color: var(--primary); font-weight: 700; text-shadow: 2px 2px 0 white; }
-
-        .stats-container {
-            display: flex;
-            gap: 15px;
-        }
-
-        .stat-badge {
-            background: white;
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-weight: 700;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-        .stat-badge:hover { transform: scale(1.1); }
-
-        /* --- Mascot --- */
-        .mascot-wrapper {
-            width: 130px;
-            height: 130px;
-            margin-bottom: -40px;
-            z-index: 5;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
-        }
-
-        /* Mascot Expressions */
-        .mascot-wrapper.idle { animation: breathe 3s infinite ease-in-out; }
-        .mascot-wrapper.thinking { animation: spinThink 1s infinite linear; }
-        .mascot-wrapper.happy { animation: jump 0.6s; }
-        .mascot-wrapper.sad { animation: shakeHead 0.5s; }
-
-        /* --- Main Card --- */
-        .main-card {
-            width: 90%;
-            max-width: 600px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            padding: 40px;
-            box-shadow: var(--shadow);
-            border: 4px solid white;
-            text-align: center;
-            position: relative;
-            margin-bottom: 50px;
-            transition: height 0.3s;
-        }
-
-        /* --- View: Upload --- */
-        .upload-view { animation: fadeUp 0.6s ease-out; }
-
-        .file-drop {
-            border: 3px dashed #E0E0E0;
-            border-radius: 25px;
-            padding: 40px 20px;
-            cursor: pointer;
-            transition: 0.3s;
-            background: rgba(255,255,255,0.5);
-        }
-        .file-drop:hover { border-color: var(--secondary); background: white; transform: scale(1.02); }
-
-        .difficulty-selector {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        
-        .diff-btn {
-            padding: 8px 16px;
-            border: 2px solid #EEE;
-            background: white;
-            border-radius: 20px;
-            cursor: pointer;
+        .nav-btn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
             font-weight: 600;
-            color: #888;
-            font-family: 'Fredoka', sans-serif;
-        }
-        .diff-btn.selected {
-            background: var(--yellow);
-            border-color: #F0C000;
-            color: #555;
-            transform: scale(1.1);
-        }
-
-        .action-btn {
-            background: var(--primary);
-            color: white;
-            font-size: 1.5rem;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 6px 0 #D43F3F;
-            transition: 0.1s;
-            font-family: 'Fredoka', sans-serif;
+            display: flex; align-items: center; gap: 12px;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: var(--bg); color: var(--text-main); }
+        .nav-btn.active { background: var(--ring-track); color: var(--text-main); }
+        [data-theme="dark"] .nav-btn.active { background: #334155; }
+
+        /* --- MAIN CONTENT --- */
+        .main-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
             width: 100%;
         }
-        .action-btn:active { transform: translateY(6px); box-shadow: none; }
-        .action-btn:disabled { background: #ccc; box-shadow: 0 6px 0 #999; cursor: wait; }
 
-        /* --- View: Quiz --- */
-        .quiz-view { display: none; text-align: left; }
-
-        .timer-track {
-            width: 100%;
-            height: 8px;
-            background: #EEE;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        .timer-fill {
-            height: 100%;
-            background: var(--secondary);
-            width: 100%;
-            transition: width 1s linear;
+        /* --- DASHBOARD WIDGETS --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 48px;
         }
 
-        .question { font-size: 1.4rem; margin-bottom: 20px; color: #444; }
-
-        .opt {
-            background: white;
-            border: 2px solid #F0F0F0;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-family: 'Fredoka', sans-serif;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            position: relative;
         }
-        .opt:hover { border-color: var(--secondary); transform: translateX(5px); }
+
+        /* Streak Widget */
+        .streak-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .streak-count { font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 700; }
         
-        .opt.correct { background: #D1F7C4; border-color: #8CE99A; color: #2B8A3E; }
-        .opt.wrong { background: #FFE3E3; border-color: #FF8787; color: #C92A2A; animation: shake 0.4s; }
+        .week-grid { display: flex; justify-content: space-between; gap: 8px; }
+        .day-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .fire-bubble {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--ring-track);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            color: #D1D5DB;
+            transition: 0.3s;
+        }
+        .fire-bubble.lit { background: #FEF3C7; color: #F59E0B; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        [data-theme="dark"] .fire-bubble.lit { background: #451A03; }
+        .day-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
 
-        /* --- XP Floating Text --- */
-        .xp-float {
-            position: absolute;
-            font-weight: bold;
-            color: #FFD700;
-            font-size: 1.5rem;
-            text-shadow: 0 2px 0 rgba(0,0,0,0.1);
-            pointer-events: none;
-            animation: floatUp 1s forwards;
-            z-index: 100;
+        /* Mascot Widget */
+        .mascot-widget { display: flex; flex-direction: column; align-items: center; text-align: center; height: 100%; justify-content: center; }
+        .mascot-svg { width: 100px; height: 100px; margin-bottom: 16px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1)); }
+        
+        /* --- DECKS LIST --- */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text-muted); }
+
+        .deck-list { display: flex; flex-direction: column; gap: 16px; }
+        
+        .deck-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex; align-items: center; gap: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .deck-item:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
+
+        /* Circular Progress Ring */
+        .ring-container {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent) var(--pct), var(--ring-track) 0deg);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .ring-inner {
+            width: 44px; height: 44px;
+            background: var(--card);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 800; color: var(--text-main);
         }
 
-        /* --- Animations Keyframes --- */
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes jump { 0% { transform: translateY(0); } 50% { transform: translateY(-30px) rotate(10deg); } 100% { transform: translateY(0); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-        @keyframes shakeHead { 0% { transform: rotate(0); } 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } 100% { transform: rotate(0); } }
-        @keyframes spinThink { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-50px) scale(1.5); opacity: 0; } }
+        /* --- BUTTONS --- */
+        .btn {
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            font-size: 0.95rem;
+            display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: #FFF; width: 100%; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-ghost { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-ghost:hover { border-color: var(--text-muted); background: var(--bg); }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.open { opacity: 1; }
+        
+        .modal-content {
+            background: var(--card);
+            width: 90%; max-width: 550px;
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            transform: scale(0.95); transition: transform 0.3s;
+        }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+
+        /* --- QUIZ UI --- */
+        .quiz-view {
+            position: fixed; inset: 0;
+            background: var(--bg);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .quiz-card {
+            max-width: 800px; margin: 0 auto; width: 100%;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 24px; padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .option-btn {
+            width: 100%; padding: 20px;
+            margin-bottom: 12px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            background: var(--bg);
+            text-align: left;
+            font-weight: 600; font-size: 1rem; color: var(--text-main);
+            cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { border-color: var(--primary); background: var(--card); }
+        .option-btn.correct { background: #ECFDF5; border-color: #10B981; color: #065F46; }
+        .option-btn.wrong { background: #FEF2F2; border-color: #EF4444; color: #991B1B; }
+
+        /* Graffiti Animation */
+        .graffiti {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-12deg) scale(0);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 5rem;
+            color: #F472B6;
+            text-shadow: 4px 4px 0px #831843, 8px 8px 0px rgba(0,0,0,0.2);
+            z-index: 300; pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+        }
+        .graffiti.show { transform: translate(-50%, -50%) rotate(-12deg) scale(1); opacity: 1; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
     </style>
 </head>
 <body>
 
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-
-    <div class="header-bar">
-        <div class="logo">Atemo.ai</div>
-        <div class="stats-container">
-            <div class="stat-badge">🔥 <span id="streakDisplay">0</span></div>
-            <div class="stat-badge">⚡ <span id="xpDisplay">0</span> XP</div>
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">🔥</div>
+            <span>Atemo</span>
         </div>
-    </div>
+        <div class="nav-btn active" onclick="showDashboard()"><span>🏠</span> Dashboard</div>
+        <div class="nav-btn" onclick="openShop()"><span>🛍️</span> Shop</div>
+        <div style="margin-top: auto;">
+            <div class="nav-btn" style="cursor: default;"><span>⚡</span> <span id="xpDisplay">0</span> XP</div>
+            <div class="nav-btn" onclick="toggleTheme()"><span>🌗</span> Theme</div>
+        </div>
+    </nav>
 
-    <div class="mascot-wrapper idle" id="mascot">
-        <svg viewBox="0 0 100 100" style="width:100%; height:100%;">
-            <rect x="20" y="30" width="60" height="50" rx="12" fill="white" stroke="#2D3436" stroke-width="3"/>
-            <rect x="25" y="35" width="50" height="40" rx="8" fill="#4ECDC4"/>
-            <rect x="30" y="42" width="40" height="26" rx="5" fill="#2D3436"/>
-            <g id="mascot-eyes">
-                <circle cx="40" cy="55" r="4" fill="white"/>
-                <circle cx="60" cy="55" r="4" fill="white"/>
-            </g>
-            <line x1="50" y1="30" x2="50" y2="15" stroke="#2D3436" stroke-width="3"/>
-            <circle cx="50" cy="12" r="6" fill="#FF6B6B" stroke="#2D3436" stroke-width="2"/>
-        </svg>
-    </div>
-
-    <div class="main-card">
+    <main class="main-scroll" id="dashboardView">
         
-        <div class="upload-view" id="viewUpload">
-            <h2>Let's Get Smarter! 🧠</h2>
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="streak-header">
+                    <div>
+                        <div class="streak-count"><span id="streakVal">0</span> Day Streak!</div>
+                        <div style="color:var(--text-muted); font-size:0.9rem; margin-top:4px;">Practice daily to keep the fire lit.</div>
+                    </div>
+                    <button class="btn btn-ghost" style="padding: 8px 12px; font-size:0.8rem;">View History</button>
+                </div>
+                
+                <div class="week-grid" id="weekGrid">
+                    </div>
+            </div>
+
+            <div class="card mascot-widget">
+                <svg class="mascot-svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="var(--mascot-bg)" stroke="var(--mascot-stroke)" stroke-width="4"/>
+                    <rect x="30" y="40" width="40" height="25" rx="6" fill="#1F2937"/>
+                    <circle cx="40" cy="52" r="4" fill="white"/>
+                    <circle cx="60" cy="52" r="4" fill="white"/>
+                    <path d="M 45 30 L 45 15" stroke="var(--mascot-stroke)" stroke-width="3"/>
+                    <circle cx="45" cy="12" r="5" fill="#F472B6"/>
+                </svg>
+                <h3 style="margin-bottom: 4px;">Master Atemo</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem;">"What shall we learn?"</p>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <div class="section-title">Jump back in</div>
+            <button class="btn btn-ghost" onclick="openCreator()">+ New Deck</button>
+        </div>
+
+        <div class="deck-list" id="deckContainer">
+            </div>
+
+    </main>
+
+    <div class="graffiti" id="graffitiText">COMBO!</div>
+
+    <div class="modal-overlay" id="createModal">
+        <div class="modal-content">
+            <h2 style="margin-top:0;">Create New Deck</h2>
             
-            <div class="file-drop" onclick="document.getElementById('pdfInput').click()">
-                <div style="font-size: 3rem; margin-bottom: 10px;">📂</div>
-                <div id="fileName" style="font-weight: 600;">Tap to Upload PDF</div>
+            <label style="display:block; font-weight:600; margin-bottom:8px;">Deck Name</label>
+            <input type="text" id="deckName" placeholder="e.g. History Final" style="width:100%; padding:14px; border-radius:12px; border:2px solid var(--border); background:var(--bg); margin-bottom:20px; color:var(--text-main);">
+
+            <div style="border:3px dashed var(--border); border-radius:20px; padding:32px; text-align:center; cursor:pointer; transition:0.2s;" onclick="document.getElementById('pdfInput').click()" id="uploadBox">
+                <div style="font-size:2.5rem; margin-bottom:10px;">📄</div>
+                <div>Upload PDF</div>
+                <div style="font-size:0.85rem; color:var(--text-muted);">or click to paste text</div>
                 <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
             </div>
-
-            <div class="difficulty-selector">
-                <div class="diff-btn selected" onclick="setDiff('easy', this)">Easy</div>
-                <div class="diff-btn" onclick="setDiff('medium', this)">Medium</div>
-                <div class="diff-btn" onclick="setDiff('hard', this)">Hard</div>
+            
+            <textarea id="pasteArea" style="display:none; width:100%; height:120px; border-radius:12px; border:2px solid var(--border); padding:12px; margin-bottom:20px; background:var(--bg); color:var(--text-main);" placeholder="Paste text here..."></textarea>
+            
+            <div style="margin-top:10px; text-align:center;">
+                <span style="color:var(--accent); font-weight:600; cursor:pointer; font-size:0.9rem;" onclick="togglePaste()">Switch to Text/PDF</span>
             </div>
 
-            <button class="action-btn" id="genBtn" onclick="startGeneration()">Create Quiz 🚀</button>
-            <div id="loaderText" style="margin-top: 15px; color: #888; display:none;">Reading PDF...</div>
+            <div style="margin-top:32px; display:flex; gap:12px;">
+                <button class="btn btn-primary" onclick="processAndSave()">Create Deck</button>
+                <button class="btn btn-ghost" onclick="closeModal('createModal')">Cancel</button>
+            </div>
         </div>
+    </div>
 
-        <div class="quiz-view" id="viewQuiz">
-            <div class="timer-track"><div class="timer-fill" id="timerBar"></div></div>
-            <div id="quizContent"></div>
-            <div id="feedback" style="height: 20px; margin-top: 10px; font-weight: bold; text-align: center;"></div>
+    <div class="modal-overlay" id="configModal">
+        <div class="modal-content">
+            <h2 style="margin-top:0;">Start Session</h2>
+            <p style="color:var(--text-muted); margin-bottom:24px;">How many questions do you want?</p>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+                <span>Questions</span>
+                <span id="qRangeVal" style="color:var(--accent)">10</span>
+            </div>
+            <input type="range" min="5" max="20" value="10" style="width:100%; margin-bottom:32px; accent-color:var(--primary);" oninput="document.getElementById('qRangeVal').innerText = this.value">
+            
+            <button class="btn btn-primary" id="startBtn" onclick="launchQuiz()">Start Quiz 🚀</button>
         </div>
+    </div>
 
-        <div class="quiz-view" id="viewResult" style="display:none; text-align: center;">
-            <h1 style="font-size: 3rem;">🎉 Awesome!</h1>
-            <p>You completed the study set.</p>
-            <h2 id="finalScore"></h2>
-            <button class="action-btn" onclick="location.reload()">Study Again 🔄</button>
+    <div class="quiz-view" id="quizView">
+        <div style="max-width:800px; margin:0 auto; width:100%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+                <button class="btn btn-ghost" onclick="exitQuiz()">✕ Exit</button>
+                <div style="font-weight:700; color:var(--text-muted);" id="qProgress">1 / 10</div>
+            </div>
+
+            <div class="quiz-card">
+                <h2 id="qText" style="font-size:1.4rem; line-height:1.5; margin-bottom:32px;">Question loading...</h2>
+                <div id="optsContainer"></div>
+
+                <div id="tutorBox" style="display:none; background:var(--mascot-bg); border:1px solid var(--mascot-stroke); padding:20px; border-radius:16px; margin-top:24px;">
+                    <strong style="color:var(--mascot-stroke)">💡 Tutor Insight:</strong>
+                    <p id="tutorMsg" style="margin:8px 0 0 0; line-height:1.6;">Explanation...</p>
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top:24px;">
+                    <button class="btn btn-ghost" id="explainBtn" style="display:none; color:var(--primary);" onclick="getExplanation()">Explain Why?</button>
+                    <button class="btn btn-primary" id="nextBtn" style="display:none; width:auto;" onclick="nextQuestion()">Next Question ➡️</button>
+                </div>
+            </div>
         </div>
-
     </div>
 
     <script>
-        // --- SECURE CONFIG ---
-        const p1 = "sk-or-v1-4fbe97112002db95641d31d2";
-        const p2 = "1925ec473548218ab0db689b3d6645e30d4ebe1a";
-        const API_KEY = p1 + p2;
+        // --- 1. CORE ENGINE & CONFIG ---
+        const API_KEY = "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";
+        const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
 
-        // --- GAME STATE ---
-        let state = {
-            xp: 0,
-            streak: 0,
-            difficulty: 'easy',
-            questions: [],
-            currentIdx: 0,
-            score: 0,
-            timer: null
-        };
-
-        // --- SOUND ENGINE (Browser Synth - No files needed!) ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
+        // --- 2. SOUND SYNTHESIZER (No external files) ---
         function playSound(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            if(AUDIO_CTX.state === 'suspended') AUDIO_CTX.resume();
+            const osc = AUDIO_CTX.createOscillator();
+            const gain = AUDIO_CTX.createGain();
+            osc.connect(gain); gain.connect(AUDIO_CTX.destination);
 
-            if (type === 'correct') {
-                // High pitch "Ding"
+            const now = AUDIO_CTX.currentTime;
+            
+            if(type === 'correct') {
+                // Happy high chime
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
             } else if (type === 'wrong') {
-                // Low pitch "Bloop"
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'win') {
-                // Victory chord
-                [400, 500, 600].forEach((freq, i) => {
-                    const o = audioCtx.createOscillator();
-                    const g = audioCtx.createGain();
-                    o.connect(g);
-                    g.connect(audioCtx.destination);
-                    o.frequency.value = freq;
-                    g.gain.value = 0.1;
-                    o.start(audioCtx.currentTime + (i*0.1));
-                    o.stop(audioCtx.currentTime + 1);
-                });
+                // Low thud
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'pop') {
+                // UI click
+                osc.frequency.setValueAtTime(800, now);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
             }
         }
 
-        // --- INIT ---
-        window.onload = () => {
-            // Load XP and Streak
-            state.streak = parseInt(localStorage.getItem('atemo_streak') || 0);
-            state.xp = parseInt(localStorage.getItem('atemo_xp') || 0);
-            updateStatsUI();
+        // --- 3. STATE MANAGEMENT (Persistence) ---
+        let state = {
+            xp: 0,
+            streak: 1,
+            lastLogin: Date.now(),
+            decks: [], // { id, name, content, score, totalQuestions, lastPlayed }
+            theme: 'light'
         };
 
-        function updateStatsUI() {
-            document.getElementById('streakDisplay').innerText = state.streak;
+        // Load or Init
+        const saved = localStorage.getItem('atemo_v10');
+        if(saved) {
+            state = JSON.parse(saved);
+        } else {
+            // New user seed
+            state.decks.push({
+                id: Date.now(),
+                name: "Demo: Solar System",
+                content: "The Sun is a star. Jupiter is the largest planet. Mars is red due to iron oxide. Earth is the third planet.",
+                score: 0,
+                totalQuestions: 5,
+                lastPlayed: Date.now()
+            });
+        }
+
+        // Save Function
+        function dbSave() {
+            localStorage.setItem('atemo_v10', JSON.stringify(state));
+            renderDashboard();
+        }
+
+        // --- 4. RENDERERS ---
+        window.onload = () => {
+            applyTheme();
+            renderDashboard();
+            renderWeek();
+        };
+
+        function renderDashboard() {
             document.getElementById('xpDisplay').innerText = state.xp;
+            document.getElementById('streakVal').innerText = state.streak;
+            
+            const list = document.getElementById('deckContainer');
+            list.innerHTML = '';
+
+            state.decks.forEach(deck => {
+                // Calculate percentage for ring
+                let pct = 0;
+                if(deck.totalQuestions > 0) {
+                    pct = Math.round((deck.score / deck.totalQuestions) * 100);
+                }
+
+                const div = document.createElement('div');
+                div.className = 'deck-item';
+                div.onclick = () => openConfig(deck.id);
+                div.innerHTML = `
+                    <div class="ring-container" style="--pct: ${pct*3.6}deg">
+                        <div class="ring-inner">${pct}%</div>
+                    </div>
+                    <div style="flex:1;">
+                        <h3 style="margin:0; font-size:1rem;">${deck.name}</h3>
+                        <div style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">
+                            Last Score: ${deck.score}/${deck.totalQuestions}
+                        </div>
+                    </div>
+                    <div style="color:var(--primary); font-weight:600; font-size:0.9rem;">Resume</div>
+                `;
+                list.appendChild(div);
+            });
         }
 
-        // --- UI HANDLERS ---
-        function setDiff(diff, btn) {
-            state.difficulty = diff;
-            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
+        function renderWeek() {
+            const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+            const grid = document.getElementById('weekGrid');
+            grid.innerHTML = '';
+            
+            const today = new Date().getDay();
+            
+            days.forEach((d, i) => {
+                const col = document.createElement('div');
+                col.className = 'day-col';
+                // Logic: Highlight days up to today if streak is active
+                const isLit = i <= today; 
+                col.innerHTML = `
+                    <div class="fire-bubble ${isLit ? 'lit' : ''}">${isLit ? '🔥' : ''}</div>
+                    <div class="day-label">${d}</div>
+                `;
+                grid.appendChild(col);
+            });
         }
 
-        document.getElementById('pdfInput').addEventListener('change', (e) => {
-            if(e.target.files[0]) {
-                document.getElementById('fileName').innerText = "✅ " + e.target.files[0].name;
-                playSound('correct'); // Little feedback sound
+        // --- 5. PDF & TEXT ENGINE ---
+        let tempContent = "";
+        
+        document.getElementById('pdfInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            
+            document.getElementById('uploadBox').innerHTML = `<div>⏳ Parsing...</div>`;
+            try {
+                const buffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(buffer).promise;
+                let fullText = "";
+                
+                // Limit parsing to first 5 pages for speed/token limits
+                for(let i=1; i<=Math.min(pdf.numPages, 5); i++){
+                    const page = await pdf.getPage(i);
+                    const txt = await page.getTextContent();
+                    fullText += txt.items.map(s=>s.str).join(" ");
+                }
+                tempContent = fullText;
+                document.getElementById('uploadBox').innerHTML = `<div style="font-size:2rem;">✅</div><div>PDF Ready</div>`;
+            } catch(err) {
+                alert("PDF Error: " + err.message);
+                document.getElementById('uploadBox').innerHTML = `<div>❌ Error</div>`;
             }
         });
 
-        // --- CORE LOGIC ---
-        async function startGeneration() {
-            const file = document.getElementById('pdfInput').files[0];
-            if(!file) return alert("Please pick a file first!");
+        function togglePaste() {
+            const box = document.getElementById('uploadBox');
+            const area = document.getElementById('pasteArea');
+            if(area.style.display === 'none') {
+                area.style.display = 'block'; box.style.display = 'none';
+            } else {
+                area.style.display = 'none'; box.style.display = 'block';
+            }
+        }
 
-            // UI Transition
-            const btn = document.getElementById('genBtn');
+        function processAndSave() {
+            const name = document.getElementById('deckName').value || "Untitled Deck";
+            if(document.getElementById('pasteArea').value) tempContent = document.getElementById('pasteArea').value;
+            
+            if(!tempContent || tempContent.length < 10) return alert("Please provide content!");
+
+            state.decks.unshift({
+                id: Date.now(),
+                name: name,
+                content: tempContent,
+                score: 0,
+                totalQuestions: 0,
+                lastPlayed: Date.now()
+            });
+            
+            dbSave();
+            closeModal('createModal');
+            tempContent = "";
+            document.getElementById('deckName').value = "";
+            document.getElementById('pasteArea').value = "";
+            document.getElementById('uploadBox').innerHTML = `<div style="font-size:2.5rem; margin-bottom:10px;">📄</div><div>Upload PDF</div><div style="font-size:0.85rem; color:var(--text-muted);">or click to paste text</div>`;
+        }
+
+        // --- 6. AI & GAME LOOP ---
+        let currentDeckId = null;
+        let gameData = { questions: [], idx: 0, score: 0, combo: 0 };
+
+        function openConfig(id) {
+            currentDeckId = id;
+            document.getElementById('configModal').classList.add('open');
+            document.getElementById('configModal').style.display = 'flex';
+        }
+
+        async function launchQuiz() {
+            const deck = state.decks.find(d => d.id === currentDeckId);
+            const count = document.getElementById('qRangeVal').innerText;
+            const btn = document.getElementById('startBtn');
+            
             btn.disabled = true;
-            document.getElementById('loaderText').style.display = 'block';
-            setMascot('thinking');
+            btn.innerText = "Generating Quiz... 🧠";
 
             try {
-                // 1. Read PDF
-                const text = await readPDF(file);
+                const prompt = `Create exactly ${count} multiple choice questions. Return ONLY raw JSON array. Format: [{"q":"...","options":["..."],"answer":0}]. TEXT: ${deck.content.substring(0, 15000)}`;
                 
-                // 2. AI Generate
-                const quiz = await callAI(text, state.difficulty);
-                state.questions = quiz;
+                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json", "HTTP-Referer":"atemo.ai" },
+                    body: JSON.stringify({
+                        "model": "deepseek/deepseek-chat",
+                        "messages": [{"role": "user", "content": prompt}]
+                    })
+                });
+
+                const data = await res.json();
+                let raw = data.choices[0].message.content;
                 
-                // 3. Start Game
-                startQuiz();
+                // ROBUST CLEANER: Strip markdown code blocks
+                raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
+                const start = raw.indexOf('[');
+                const end = raw.lastIndexOf(']');
+                
+                if(start === -1) throw new Error("AI output invalid");
+                
+                gameData.questions = JSON.parse(raw.substring(start, end+1));
+                gameData.idx = 0;
+                gameData.score = 0;
+                gameData.combo = 0;
+
+                // Close modal, open quiz
+                closeModal('configModal');
+                document.getElementById('quizView').style.display = 'flex';
+                renderQuestion();
 
             } catch(e) {
-                alert("Error: " + e.message);
-                setMascot('sad');
+                alert("Generation failed: " + e.message);
+            } finally {
                 btn.disabled = false;
+                btn.innerText = "Start Quiz 🚀";
             }
         }
 
-        async function readPDF(file) {
-            const buffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument(buffer).promise;
-            let fullText = "";
-            const max = Math.min(pdf.numPages, 4);
-            for(let i=1; i<=max; i++) {
-                const p = await pdf.getPage(i);
-                const t = await p.getTextContent();
-                fullText += t.items.map(s=>s.str).join(" ");
-            }
-            return fullText;
-        }
-
-        async function callAI(text, diff) {
-            const prompt = `Create 5 ${diff} difficulty multiple choice questions.
-            Return ONLY raw JSON array: [{"q": "...", "options": ["A","B","C","D"], "answer": 0}]
-            TEXT: ${text.substring(0, 7000)}`;
-
-            const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${API_KEY}`,
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": "atemo.ai",
-                },
-                body: JSON.stringify({
-                    "model": "deepseek/deepseek-chat",
-                    "messages": [{"role": "user", "content": prompt}]
-                })
-            });
-            const data = await res.json();
-            let content = data.choices[0].message.content.replace(/```json/g,'').replace(/```/g,'').trim();
-            return JSON.parse(content);
-        }
-
-        // --- QUIZ LOOP ---
-        function startQuiz() {
-            document.getElementById('viewUpload').style.display = 'none';
-            document.getElementById('viewQuiz').style.display = 'block';
-            setMascot('idle');
-            loadQuestion(0);
-        }
-
-        function loadQuestion(idx) {
-            state.currentIdx = idx;
-            const q = state.questions[idx];
-            const div = document.getElementById('quizContent');
+        function renderQuestion() {
+            const q = gameData.questions[gameData.idx];
+            document.getElementById('qProgress').innerText = `${gameData.idx + 1} / ${gameData.questions.length}`;
+            document.getElementById('qText').innerText = q.q;
             
-            // Reset Timer
-            resetTimer();
+            // Reset UI
+            document.getElementById('tutorBox').style.display = 'none';
+            document.getElementById('explainBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            const cont = document.getElementById('optsContainer');
+            cont.innerHTML = '';
 
-            let html = `<div class="question">${idx+1}. ${q.q}</div>`;
             q.options.forEach((opt, i) => {
-                html += `<div class="opt" onclick="check(${i}, ${q.answer}, this)">
-                            <span>${opt}</span>
-                            <span class="icon">⚪</span>
-                         </div>`;
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span>${opt}</span><span>⚪</span>`;
+                btn.onclick = () => checkAnswer(i, btn);
+                cont.appendChild(btn);
             });
-            div.innerHTML = html;
         }
 
-        function resetTimer() {
-            const bar = document.getElementById('timerBar');
-            bar.style.transition = 'none';
-            bar.style.width = '100%';
-            setTimeout(() => {
-                bar.style.transition = 'width 15s linear'; // 15 seconds per question
-                bar.style.width = '0%';
-            }, 50);
-        }
+        function checkAnswer(picked, btn) {
+            // Lock UI
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
 
-        function check(picked, correct, el) {
-            // Stop Timer interactions
-            document.getElementById('timerBar').style.transition = 'none';
+            const q = gameData.questions[gameData.idx];
             
-            // Disable all inputs
-            const allOpts = document.querySelectorAll('.opt');
-            allOpts.forEach(o => o.style.pointerEvents = 'none');
-
-            if(picked === correct) {
-                // WIN
-                el.classList.add('correct');
-                el.querySelector('.icon').innerText = '✅';
+            if(picked === q.answer) {
+                // Correct
+                btn.classList.add('correct');
+                btn.children[1].innerText = '✅';
                 playSound('correct');
-                setMascot('happy');
-                spawnXP(el); // XP Bubble
-                state.score++;
-                state.xp += 10;
-                localStorage.setItem('atemo_xp', state.xp);
-                updateStatsUI();
+                gameData.score++;
+                gameData.combo++;
+                state.xp += 10 + (gameData.combo * 5); // XP Bonus
                 
-                // Confetti
-                confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+                // Combo Logic
+                if(gameData.combo > 1) showGraffiti(`${gameData.combo}x COMBO!`);
+                else confetti({ particleCount: 30, origin: { y: 0.7 } });
+
             } else {
-                // LOSE
-                el.classList.add('wrong');
-                el.querySelector('.icon').innerText = '❌';
-                allOpts[correct].classList.add('correct'); // Show right answer
+                // Wrong
+                btn.classList.add('wrong');
+                btn.children[1].innerText = '❌';
+                // Show Right
+                allBtns[q.answer].classList.add('correct');
+                allBtns[q.answer].children[1].innerText = '👈';
+                
                 playSound('wrong');
-                setMascot('sad');
-                // Shake screen
-                document.body.style.animation = 'shake 0.3s';
-                setTimeout(()=> document.body.style.animation = '', 300);
+                gameData.combo = 0;
+                document.getElementById('explainBtn').style.display = 'inline-block';
             }
 
-            // Next Question
-            setTimeout(() => {
-                if(state.currentIdx < state.questions.length - 1) {
-                    setMascot('idle');
-                    loadQuestion(state.currentIdx + 1);
-                } else {
-                    endGame();
-                }
-            }, 2000);
+            dbSave(); // Save XP updates
+            document.getElementById('nextBtn').style.display = 'inline-block';
         }
 
-        function endGame() {
-            document.getElementById('viewQuiz').style.display = 'none';
-            document.getElementById('viewResult').style.display = 'block';
-            document.getElementById('finalScore').innerText = `Score: ${state.score} / ${state.questions.length}`;
-            playSound('win');
+        async function getExplanation() {
+            const btn = document.getElementById('explainBtn');
+            btn.innerText = "Thinking...";
+            const q = gameData.questions[gameData.idx];
             
-            // Update Streak if good score
-            if(state.score >= 3) {
-                state.streak++;
-                localStorage.setItem('atemo_streak', state.streak);
+            try {
+                const prompt = `Explain briefly why option "${q.options[q.answer]}" is the correct answer to "${q.q}".`;
+                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json", "HTTP-Referer":"atemo.ai" },
+                    body: JSON.stringify({ "model": "deepseek/deepseek-chat", "messages": [{"role": "user", "content": prompt}] })
+                });
+                const data = await res.json();
+                document.getElementById('tutorMsg').innerText = data.choices[0].message.content;
+                document.getElementById('tutorBox').style.display = 'block';
+                btn.style.display = 'none';
+            } catch(e) {
+                alert("Tutor offline");
             }
-            updateStatsUI();
-
-            // Big Confetti
-            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
         }
 
-        // --- ANIMATION HELPERS ---
-        function setMascot(mood) {
-            const m = document.getElementById('mascot');
-            const eyes = document.getElementById('mascot-eyes');
-            m.className = `mascot-wrapper ${mood}`;
-
-            // Eye expressions
-            if(mood === 'happy') eyes.innerHTML = '<path d="M 36 55 Q 40 50 44 55 M 56 55 Q 60 50 64 55" stroke="white" stroke-width="3" fill="none"/>';
-            else if(mood === 'sad') eyes.innerHTML = '<circle cx="40" cy="58" r="3" fill="white"/><circle cx="60" cy="58" r="3" fill="white"/>';
-            else eyes.innerHTML = '<circle cx="40" cy="55" r="4" fill="white"/><circle cx="60" cy="55" r="4" fill="white"/>';
+        function nextQuestion() {
+            if(gameData.idx < gameData.questions.length - 1) {
+                gameData.idx++;
+                renderQuestion();
+            } else {
+                // End Game
+                const deck = state.decks.find(d => d.id === currentDeckId);
+                deck.score = gameData.score;
+                deck.totalQuestions = gameData.questions.length;
+                deck.lastPlayed = Date.now();
+                dbSave();
+                
+                confetti({ particleCount: 200, spread: 100 });
+                alert(`Session Complete!\nScore: ${gameData.score} / ${gameData.questions.length}\nXP Gained: ${gameData.score * 10}`);
+                exitQuiz();
+            }
         }
 
-        function spawnXP(element) {
-            const rect = element.getBoundingClientRect();
-            const bubble = document.createElement('div');
-            bubble.innerText = "+10 XP";
-            bubble.className = "xp-float";
-            bubble.style.left = (rect.left + rect.width/2) + "px";
-            bubble.style.top = rect.top + "px";
-            document.body.appendChild(bubble);
-            setTimeout(() => bubble.remove(), 1000);
+        // --- 7. UI UTILITIES ---
+        function showGraffiti(text) {
+            const el = document.getElementById('graffitiText');
+            el.innerText = text;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 1200);
         }
+
+        function openCreator() {
+            document.getElementById('createModal').classList.add('open');
+            document.getElementById('createModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+            setTimeout(() => document.getElementById(id).style.display = 'none', 300);
+        }
+
+        function exitQuiz() {
+            document.getElementById('quizView').style.display = 'none';
+            renderDashboard(); // Refresh progress rings
+        }
+
+        function toggleTheme() {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            applyTheme();
+            dbSave();
+        }
+
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+        }
+        
+        function openShop() { alert("Shop coming in v11! Keep earning XP!"); }
+        function showDashboard() { document.getElementById('dashboardView').scrollTop = 0; }
 
     </script>
 </body>
