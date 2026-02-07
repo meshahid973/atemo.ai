@@ -1,774 +1,2459 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atemo.ai | Master Your Studies</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Atemo | Learning Evolved</title>
 
-    <style>
-        :root {
-            /* Gizmo-Authentic Palette */
-            --bg: #F9FAFB;
-            --sidebar: #FFFFFF;
-            --card: #FFFFFF;
-            --text-main: #111827;
-            --text-muted: #6B7280;
-            --border: #E5E7EB;
-            --primary: #1F2937;
-            --primary-hover: #111827;
-            --accent: #10B981; /* Green for mastery */
-            --warning: #F59E0B; /* Orange for fire */
-            --error: #EF4444;
-            --ring-track: #F3F4F6;
-            --mascot-bg: #EEF2FF;
-            --mascot-stroke: #4F46E5;
-        }
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 
-        [data-theme="dark"] {
-            --bg: #0F172A;
-            --sidebar: #1E293B;
-            --card: #1E293B;
-            --text-main: #F9FAFB;
-            --text-muted: #9CA3AF;
-            --border: #334155;
-            --primary: #818CF8;
-            --primary-hover: #6366F1;
-            --ring-track: #334155;
-            --mascot-bg: #1E1B4B;
-            --mascot-stroke: #818CF8;
-        }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            transition: background 0.3s, color 0.3s;
-        }
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  </script>
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar);
-            border-right: 1px solid var(--border);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-shrink: 0;
-            z-index: 20;
-        }
+  <style>
+    :root {
+      /* LIGHT THEME */
+      --bg: #FAFAFA;
+      --sidebar-bg: #FFFFFF;
+      --card-bg: #FFFFFF;
 
-        .brand {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 1.8rem;
-            color: var(--text-main);
-            margin-bottom: 32px;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .brand-icon { font-size: 1.8rem; animation: pulse 2s infinite; }
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-inverted: #FFFFFF;
 
-        .nav-btn {
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-muted);
-            font-weight: 600;
-            cursor: pointer;
-            display: flex; align-items: center; gap: 12px;
-            transition: all 0.2s;
-        }
-        .nav-btn:hover { background: var(--bg); color: var(--text-main); }
-        .nav-btn.active { background: var(--ring-track); color: var(--text-main); }
-        [data-theme="dark"] .nav-btn.active { background: #334155; }
+      --brand-dark: #1F2937;
+      --brand-green: #22C55E;
+      --brand-green-light: #DCFCE7;
+      --brand-red: #EF4444;
+      --brand-red-light: #FEE2E2;
+      --brand-blue: #3B82F6;
+      --brand-purple: #8B5CF6;
 
-        /* --- MAIN CONTENT --- */
-        .main-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
+      --border: #E5E7EB;
+      --input-bg: #FFFFFF;
 
-        /* --- DASHBOARD WIDGETS --- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            margin-bottom: 48px;
-        }
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-float: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-            position: relative;
-        }
+      --radius-xl: 24px;
+      --radius-l: 16px;
+      --radius-m: 12px;
+    }
 
-        /* Streak Widget */
-        .streak-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-        .streak-count { font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 700; }
-        
-        .week-grid { display: flex; justify-content: space-between; gap: 8px; }
-        .day-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .fire-bubble {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: var(--ring-track);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
-            color: #D1D5DB;
-            transition: 0.3s;
-        }
-        .fire-bubble.lit { background: #FEF3C7; color: #F59E0B; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
-        [data-theme="dark"] .fire-bubble.lit { background: #451A03; }
-        .day-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    [data-theme="dark"]{
+      /* DARK THEME */
+      --bg: #0F172A;
+      --sidebar-bg: #0B1220;
+      --card-bg: #121A2B;
 
-        /* Mascot Widget */
-        .mascot-widget { display: flex; flex-direction: column; align-items: center; text-align: center; height: 100%; justify-content: center; }
-        .mascot-svg { width: 100px; height: 100px; margin-bottom: 16px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1)); }
-        
-        /* --- DECKS LIST --- */
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text-muted); }
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-inverted: #0F172A;
 
-        .deck-list { display: flex; flex-direction: column; gap: 16px; }
-        
-        .deck-item {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            display: flex; align-items: center; gap: 24px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .deck-item:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
+      --brand-dark: #818CF8;
+      --brand-green: #4ADE80;
+      --brand-green-light: #064E3B;
+      --brand-red: #F87171;
+      --brand-red-light: #7F1D1D;
+      --brand-blue: #60A5FA;
+      --brand-purple: #A78BFA;
 
-        /* Circular Progress Ring */
-        .ring-container {
-            width: 56px; height: 56px;
-            border-radius: 50%;
-            background: conic-gradient(var(--accent) var(--pct), var(--ring-track) 0deg);
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-        }
-        .ring-inner {
-            width: 44px; height: 44px;
-            background: var(--card);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; font-weight: 800; color: var(--text-main);
-        }
+      --border: #22314D;
+      --input-bg: #0F172A;
 
-        /* --- BUTTONS --- */
-        .btn {
-            padding: 14px 24px;
-            border-radius: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: 0.2s;
-            font-size: 0.95rem;
-            display: inline-flex; justify-content: center; align-items: center; gap: 8px;
-        }
-        .btn-primary { background: var(--primary); color: #FFF; width: 100%; }
-        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-ghost { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
-        .btn-ghost:hover { border-color: var(--text-muted); background: var(--bg); }
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35);
+      --shadow-float: 0 10px 15px -3px rgba(0, 0, 0, 0.55);
+    }
 
-        /* --- MODALS --- */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(6px);
-            z-index: 100;
-            display: none; justify-content: center; align-items: center;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .modal-overlay.open { opacity: 1; }
-        
-        .modal-content {
-            background: var(--card);
-            width: 90%; max-width: 550px;
-            border-radius: 28px;
-            padding: 32px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            transform: scale(0.95); transition: transform 0.3s;
-        }
-        .modal-overlay.open .modal-content { transform: scale(1); }
+    *{ box-sizing:border-box; outline:none; -webkit-tap-highlight-color:transparent; transition: background-color .25s ease, border-color .25s ease, color .25s ease, transform .2s ease; }
+    body{
+      font-family:'Inter', sans-serif;
+      background:var(--bg);
+      color:var(--text-primary);
+      margin:0;
+      height:100vh;
+      display:flex;
+      overflow:hidden;
+    }
 
-        /* --- QUIZ UI --- */
-        .quiz-view {
-            position: fixed; inset: 0;
-            background: var(--bg);
-            z-index: 200;
-            display: none;
-            flex-direction: column;
-            padding: 40px;
-            overflow-y: auto;
-        }
-        .quiz-card {
-            max-width: 800px; margin: 0 auto; width: 100%;
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 24px; padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
+    /* ANIMATIONS */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0;} to { transform: translateX(0); opacity: 1;} }
+    @keyframes shake { 0%,100% { transform: translateX(0);} 25% { transform: translateX(-5px);} 75% { transform: translateX(5px);} }
+    @keyframes pop { 0% { transform: scale(1);} 50% { transform: scale(1.08);} 100% { transform: scale(1);} }
+    @keyframes floaty { 0% { transform: translateY(0);} 50% { transform: translateY(-4px);} 100% { transform: translateY(0);} }
+    @keyframes countUpGlow { 0% { filter: brightness(1);} 50% { filter: brightness(1.25);} 100% { filter: brightness(1);} }
+    @keyframes mascotDance { 0%{ transform: rotate(-8deg) scale(1);} 50%{ transform: rotate(8deg) scale(1.08);} 100%{ transform: rotate(-8deg) scale(1);} }
+    @keyframes shimmer { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
 
-        .option-btn {
-            width: 100%; padding: 20px;
-            margin-bottom: 12px;
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            background: var(--bg);
-            text-align: left;
-            font-weight: 600; font-size: 1rem; color: var(--text-main);
-            cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.2s;
-        }
-        .option-btn:hover { border-color: var(--primary); background: var(--card); }
-        .option-btn.correct { background: #ECFDF5; border-color: #10B981; color: #065F46; }
-        .option-btn.wrong { background: #FEF2F2; border-color: #EF4444; color: #991B1B; }
+    /* TOASTS */
+    #toast-container{
+      position:fixed; top:20px; right:20px; z-index:3000;
+      display:flex; flex-direction:column; gap:10px; pointer-events:none;
+    }
+    .toast{
+      background:var(--card-bg);
+      border:1px solid var(--border);
+      border-left:4px solid var(--brand-dark);
+      padding:16px 18px;
+      border-radius:14px;
+      box-shadow:var(--shadow-float);
+      min-width:300px;
+      pointer-events:auto;
+      animation:slideInRight .3s cubic-bezier(.16,1,.3,1);
+      display:flex; align-items:center; gap:12px;
+    }
+    .toast.success{ border-left-color:var(--brand-green); }
+    .toast.error{ border-left-color:var(--brand-red); }
+    .toast-icon{ font-size:1.2rem; }
+    .toast-msg{ font-size:.92rem; font-weight:750; color:var(--text-primary); }
 
-        /* Graffiti Animation */
-        .graffiti {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(-12deg) scale(0);
-            font-family: 'Fredoka', sans-serif;
-            font-size: 5rem;
-            color: #F472B6;
-            text-shadow: 4px 4px 0px #831843, 8px 8px 0px rgba(0,0,0,0.2);
-            z-index: 300; pointer-events: none;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            opacity: 0;
-        }
-        .graffiti.show { transform: translate(-50%, -50%) rotate(-12deg) scale(1); opacity: 1; }
+    /* SIDEBAR */
+    .sidebar{
+      width:290px;
+      background: linear-gradient(180deg, var(--sidebar-bg), color-mix(in srgb, var(--sidebar-bg) 92%, black 8%));
+      border-right:1px solid var(--border);
+      display:flex;
+      flex-direction:column;
+      padding:22px 16px;
+      gap:10px;
+      z-index:50;
+    }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .brand{
+      font-family:'Fredoka', sans-serif;
+      font-size:1.85rem;
+      font-weight:800;
+      margin-bottom:6px;
+      padding-left:10px;
+      color:var(--text-primary);
+      display:flex; align-items:center; gap:10px;
+      letter-spacing:-.5px;
+    }
+    .brand small{
+      font-family:'Inter', sans-serif;
+      font-size:.72rem;
+      font-weight:900;
+      color:var(--text-secondary);
+      background: var(--bg);
+      border:1px solid var(--border);
+      padding:4px 8px;
+      border-radius:999px;
+    }
 
-    </style>
+    .cta-btn{
+      background:var(--brand-dark);
+      color:var(--text-inverted);
+      padding:12px 14px;
+      border-radius:999px;
+      font-weight:800;
+      text-align:center;
+      cursor:pointer;
+      margin-bottom:10px;
+      box-shadow:var(--shadow-md);
+      border:2px solid transparent;
+      user-select:none;
+    }
+    .cta-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 22px -10px rgba(0,0,0,.28); filter:brightness(108%); }
+    .cta-btn:active{ transform:translateY(0) scale(.985); box-shadow:var(--shadow-sm); }
+
+    .nav-item{
+      padding:10px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color:var(--text-secondary);
+      font-weight:750;
+      font-size:.95rem;
+      border:1px solid transparent;
+      user-select:none;
+    }
+    .nav-item:hover{
+      background: color-mix(in srgb, var(--bg) 70%, transparent);
+      color:var(--text-primary);
+      transform: translateX(4px);
+    }
+    .nav-item.active{
+      background: linear-gradient(135deg, var(--brand-blue), color-mix(in srgb, var(--brand-blue) 65%, var(--brand-purple) 35%));
+      color:#fff;
+      box-shadow: 0 10px 18px -14px rgba(59,130,246,.9);
+    }
+    .nav-icon{ width:24px; text-align:center; font-size:1.15rem; }
+
+    .section-label{
+      font-size:.73rem;
+      font-weight:950;
+      color:var(--text-secondary);
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      margin:18px 0 6px 10px;
+      opacity:.9;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:8px;
+    }
+    .badge{
+      font-size:.7rem;
+      font-weight:900;
+      color:var(--text-primary);
+      background:var(--bg);
+      border:1px solid var(--border);
+      padding:3px 8px;
+      border-radius:999px;
+    }
+
+    .sidebar-search{
+      width:100%;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-primary);
+      font-weight:750;
+      font-size:.92rem;
+      margin:0 0 6px 0;
+    }
+    .sidebar-search::placeholder{ color: color-mix(in srgb, var(--text-secondary) 80%, transparent); font-weight:700; }
+
+    .deck-list-wrap{
+      flex:1;
+      overflow-y:auto;
+      padding-right:4px;
+      border-radius:14px;
+    }
+
+    .deck-list-item{
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      color:var(--text-secondary);
+      font-size:.92rem;
+      font-weight:650;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      user-select:none;
+      border:1px solid transparent;
+    }
+    .deck-list-item:hover{
+      background: color-mix(in srgb, var(--bg) 78%, transparent);
+      color:var(--text-primary);
+      transform: translateX(3px);
+    }
+    .deck-list-item.active{
+      background: color-mix(in srgb, var(--brand-purple) 18%, var(--card-bg) 82%);
+      border-color: color-mix(in srgb, var(--brand-purple) 45%, var(--border) 55%);
+      color: var(--text-primary);
+    }
+    .deck-dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; transition:transform .2s; }
+    .deck-list-item:hover .deck-dot{ transform:scale(1.5); }
+
+    .theme-toggle{
+      margin-top:auto;
+      padding:12px 12px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background: var(--bg);
+      cursor:pointer;
+      color:var(--text-secondary);
+      font-weight:800;
+      font-size:.92rem;
+      border:1px solid var(--border);
+      user-select:none;
+    }
+    .theme-toggle:hover{ color:var(--text-primary); transform:translateY(-1px); box-shadow: var(--shadow-sm); }
+
+    /* MAIN */
+    .main-area{
+      flex:1;
+      overflow-y:auto;
+      padding:30px 38px;
+      position:relative;
+      scroll-behavior:smooth;
+    }
+    .view-section{ display:none; animation: fadeIn .35s cubic-bezier(.16,1,.3,1); }
+    .view-section.active{ display:block; }
+
+    /* LEVEL HEADER */
+    .level-header{
+      background: var(--card-bg);
+      border:1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: 16px 22px;
+      display:flex; align-items:center; gap:18px;
+      margin-bottom: 26px;
+      box-shadow: var(--shadow-sm);
+    }
+    .level-header:hover{ transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+    .level-badge{
+      width:54px; height:54px;
+      background: linear-gradient(135deg, #FCD34D, #F59E0B);
+      border-radius: 16px;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      color:#78350F;
+      font-weight:950;
+      font-size:1.1rem;
+      box-shadow: 0 5px 0 #D97706;
+      transform: rotate(-2deg);
+    }
+    .progress-track{
+      flex:1; height:14px;
+      background: var(--bg);
+      border-radius: 999px;
+      overflow:hidden;
+      border:1px solid var(--border);
+    }
+    .progress-fill{
+      height:100%;
+      background: linear-gradient(90deg, #22C55E 0%, #4ADE80 50%, #22C55E 100%);
+      width:0%;
+      transition: width .8s ease;
+      border-radius: 999px;
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite linear;
+    }
+
+    /* DASHBOARD */
+    .dashboard-grid{ display:grid; grid-template-columns: 2.5fr 1fr; gap: 26px; }
+    .card{
+      background: var(--card-bg);
+      border:1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 22px;
+    }
+
+    .streak-container{ display:flex; justify-content:space-between; align-items:flex-start; }
+    .calendar-row{ display:flex; gap:8px; margin-top:22px; justify-content:space-between; }
+    .cal-day{ display:flex; flex-direction:column; align-items:center; gap:8px; font-size:.8rem; font-weight:850; color:var(--text-secondary); }
+    .cal-bubble{
+      width:44px; height:44px; border-radius:50%;
+      background: var(--bg);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.2rem;
+      border: 2px solid transparent;
+      color: var(--text-secondary);
+    }
+    .cal-bubble.hit{ background: var(--brand-red-light); color: var(--brand-red); border-color: var(--brand-red); }
+
+    .resume-card{
+      background: var(--brand-green-light);
+      border: 1px solid var(--brand-green);
+      border-radius: var(--radius-l);
+      padding: 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      cursor:pointer;
+      user-select:none;
+    }
+    .resume-card:hover{ transform: translateY(-3px); box-shadow: var(--shadow-md); filter: brightness(105%); }
+    [data-theme="dark"] .resume-card{ background: rgba(34,197,94,.12); }
+
+    .empty-dash{
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-l);
+      padding: 40px;
+      text-align:center;
+      color: var(--text-secondary);
+      background: var(--bg);
+      cursor:pointer;
+      user-select:none;
+    }
+    .empty-dash:hover{ border-color: var(--brand-dark); background: var(--card-bg); transform: scale(1.01); }
+
+    /* STUDY GROUPS */
+    .avatars-stack{ display:flex; justify-content:center; margin-bottom:18px; }
+    .avatar-circle{
+      width:50px; height:50px; border-radius:50%;
+      border:4px solid var(--card-bg);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem;
+      margin-left:-14px;
+      position:relative;
+      background:#E5E7EB;
+      box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    }
+    .avatar-circle:first-child{ margin-left:0; }
+    .live-dot{
+      width:12px; height:12px;
+      background:#22C55E;
+      border:2px solid var(--card-bg);
+      border-radius:50%;
+      position:absolute;
+      bottom:0; right:0;
+      box-shadow: 0 0 0 2px #22C55E40;
+    }
+
+    /* GRID */
+    .decks-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; }
+    .deck-tile{
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      display:flex; flex-direction:column; justify-content:space-between;
+      height: 200px;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      box-shadow: var(--shadow-sm);
+      user-select:none;
+    }
+    .deck-tile:hover{ transform: translateY(-6px); box-shadow: var(--shadow-float); border-color: var(--brand-dark); }
+    .deck-tile::before{
+      content:'';
+      position:absolute; top:0; left:0; width:100%; height:6px;
+      background: linear-gradient(90deg, var(--brand-dark), var(--brand-blue));
+      opacity:.85;
+    }
+
+    /* MODALS */
+    .modal-overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(5px);
+      z-index:1000;
+      display:none;
+      align-items:center; justify-content:center;
+      opacity:0;
+      transition: opacity .25s ease;
+    }
+    .modal-overlay.show{ opacity:1; }
+    .modal{
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 560px;
+      border-radius: 24px;
+      padding: 30px;
+      position:relative;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,.25);
+      transform: scale(.95);
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+      border: 1px solid var(--border);
+    }
+    .modal-overlay.show .modal{ transform: scale(1); }
+
+    .modal h2{ margin-top:0; font-family:'Fredoka'; letter-spacing:-.3px; }
+    .modal p{ color: var(--text-secondary); font-weight:550; margin-top:6px; }
+
+    .field{
+      width:100%;
+      padding: 14px 16px;
+      border:2px solid var(--border);
+      border-radius: 14px;
+      font-family:inherit;
+      font-size: 1rem;
+      font-weight:650;
+      background: var(--input-bg);
+      color: var(--text-primary);
+    }
+
+    /* Tabs inside create modal */
+    .tabs{
+      display:flex; gap:10px; margin: 14px 0 16px 0;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: 16px;
+    }
+    .tab{
+      flex:1;
+      text-align:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight:900;
+      cursor:pointer;
+      color: var(--text-secondary);
+      border:1px solid transparent;
+      user-select:none;
+    }
+    .tab.active{
+      background: var(--card-bg);
+      color: var(--text-primary);
+      border-color: var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Upload area */
+    .upload-area{
+      border:2px dashed var(--border);
+      padding: 34px;
+      text-align:center;
+      border-radius: 16px;
+      cursor:pointer;
+      background: var(--bg);
+      user-select:none;
+    }
+    .upload-area:hover{ border-color: var(--brand-green); background: var(--card-bg); }
+
+    /* Slider */
+    input[type=range]{
+      width:100%; height:8px;
+      background: var(--bg);
+      border-radius: 999px;
+      outline:none;
+      -webkit-appearance:none; appearance:none;
+      margin: 22px 0;
+      cursor:pointer;
+      border: 1px solid var(--border);
+    }
+    input[type=range]::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      width:28px; height:28px;
+      background: var(--brand-dark);
+      border-radius:50%;
+      cursor:grab;
+      box-shadow: 0 4px 6px rgba(0,0,0,.2);
+    }
+    input[type=range]::-webkit-slider-thumb:active{ transform: scale(1.12); cursor:grabbing; }
+
+    /* QUIZ */
+    .quiz-view{
+      position:fixed; inset:0;
+      background: var(--bg);
+      z-index:2000;
+      display:none;
+      flex-direction:column;
+    }
+    .quiz-header{
+      padding: 18px 38px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center;
+      box-shadow: var(--shadow-sm);
+      gap: 14px;
+    }
+    .quiz-header .right-tools{
+      display:flex; gap:10px; align-items:center;
+    }
+    .chip{
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-primary);
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      display:flex; align-items:center; gap:8px;
+    }
+    .chip:hover{ transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .chip small{ color: var(--text-secondary); font-weight:900; }
+
+    .quiz-body{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      padding-top: 56px;
+      overflow-y:auto;
+      padding-bottom: 40px;
+    }
+    .question-card{
+      background: var(--card-bg);
+      width:100%;
+      max-width: 860px;
+      padding: 46px;
+      border-radius: 34px;
+      box-shadow: var(--shadow-float);
+      border:1px solid var(--border);
+      animation: fadeIn .45s ease;
+      position:relative;
+    }
+    .question-card.shake{ animation: shake .4s ease-in-out; border-color: var(--brand-red); }
+
+    .opt-grid{ display:grid; gap: 14px; margin-top: 26px; }
+    .opt-btn{
+      width:100%;
+      padding: 20px 22px;
+      border:2px solid var(--border);
+      border-radius: 18px;
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-weight:750;
+      text-align:left;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      font-size: 1.06rem;
+      box-shadow: 0 4px 0 var(--border);
+      user-select:none;
+    }
+    .opt-btn:hover{ transform: translateY(-2px); border-color: var(--text-secondary); }
+    .opt-btn:active{ transform: translateY(2px); box-shadow:none; }
+
+    .opt-btn.correct{
+      background: var(--brand-green-light);
+      border-color: var(--brand-green);
+      color: #14532D;
+      box-shadow: 0 4px 0 var(--brand-green);
+    }
+    [data-theme="dark"] .opt-btn.correct{ color:#DCFCE7; background:#064E3B; }
+
+    .opt-btn.wrong{
+      background: var(--brand-red-light);
+      border-color: var(--brand-red);
+      color: #7F1D1D;
+      box-shadow: 0 4px 0 var(--brand-red);
+    }
+    [data-theme="dark"] .opt-btn.wrong{ color:#FEE2E2; background:#7F1D1D; }
+
+    .loader{
+      border: 5px solid var(--bg);
+      border-top: 5px solid var(--brand-dark);
+      border-radius:50%;
+      width:50px; height:50px;
+      animation: spin .8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { 0%{ transform: rotate(0deg);} 100%{ transform: rotate(360deg);} }
+
+    /* Tutor UI */
+    .tutor-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      height: 420px;
+    }
+    .chatlog{
+      flex:1;
+      border:1px solid var(--border);
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 12px;
+      overflow-y:auto;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .bubble{
+      max-width: 84%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: var(--card-bg);
+      box-shadow: var(--shadow-sm);
+      font-weight:650;
+      line-height: 1.35;
+    }
+    .bubble.user{ margin-left:auto; background: color-mix(in srgb, var(--brand-blue) 14%, var(--card-bg) 86%); }
+    .bubble.ai{ margin-right:auto; }
+    .chatrow{
+      display:flex;
+      gap:10px;
+    }
+    .chatrow button{
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: var(--brand-dark);
+      color: var(--text-inverted);
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chatrow button:hover{ transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+    /* End Screen */
+    .end-screen{
+      position:fixed; inset:0;
+      z-index: 2500;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(1200px 600px at 50% 30%, color-mix(in srgb, var(--brand-purple) 25%, transparent), rgba(0,0,0,.65));
+      backdrop-filter: blur(6px);
+    }
+    .end-card{
+      width: min(720px, 92vw);
+      background: var(--card-bg);
+      border:1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 30px 80px -30px rgba(0,0,0,.6);
+      position:relative;
+      overflow:hidden;
+    }
+    .end-card::before{
+      content:'';
+      position:absolute; inset:-2px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--brand-blue) 70%, transparent), color-mix(in srgb, var(--brand-purple) 70%, transparent));
+      opacity:.18;
+      filter: blur(18px);
+    }
+    .end-inner{
+      position:relative;
+      display:grid;
+      grid-template-columns: 1.3fr .9fr;
+      gap: 18px;
+      align-items:center;
+    }
+    .mascot{
+      font-size: 4.3rem;
+      animation: mascotDance .8s infinite ease-in-out;
+      display:flex; align-items:center; justify-content:center;
+      width: 120px; height: 120px;
+      border-radius: 28px;
+      background: color-mix(in srgb, var(--brand-green) 16%, var(--bg) 84%);
+      border:1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      margin: 0 auto;
+    }
+    .xp-big{
+      font-family:'Fredoka';
+      font-size: 3.2rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin: 6px 0;
+      animation: countUpGlow .9s infinite ease-in-out;
+    }
+    .end-actions{
+      display:flex;
+      gap: 12px;
+      justify-content:flex-end;
+      margin-top: 18px;
+    }
+
+    /* Small helper */
+    .muted{ color: var(--text-secondary); font-weight:650; }
+    hr.sep{ border:0; border-top:1px solid var(--border); margin: 16px 0; }
+
+  </style>
 </head>
+
 <body>
+  <div id="toast-container"></div>
 
-    <nav class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">🔥</div>
-            <span>Atemo</span>
-        </div>
-        <div class="nav-btn active" onclick="showDashboard()"><span>🏠</span> Dashboard</div>
-        <div class="nav-btn" onclick="openShop()"><span>🛍️</span> Shop</div>
-        <div style="margin-top: auto;">
-            <div class="nav-btn" style="cursor: default;"><span>⚡</span> <span id="xpDisplay">0</span> XP</div>
-            <div class="nav-btn" onclick="toggleTheme()"><span>🌗</span> Theme</div>
-        </div>
-    </nav>
-
-    <main class="main-scroll" id="dashboardView">
-        
-        <div class="dashboard-grid">
-            <div class="card">
-                <div class="streak-header">
-                    <div>
-                        <div class="streak-count"><span id="streakVal">0</span> Day Streak!</div>
-                        <div style="color:var(--text-muted); font-size:0.9rem; margin-top:4px;">Practice daily to keep the fire lit.</div>
-                    </div>
-                    <button class="btn btn-ghost" style="padding: 8px 12px; font-size:0.8rem;">View History</button>
-                </div>
-                
-                <div class="week-grid" id="weekGrid">
-                    </div>
-            </div>
-
-            <div class="card mascot-widget">
-                <svg class="mascot-svg" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="var(--mascot-bg)" stroke="var(--mascot-stroke)" stroke-width="4"/>
-                    <rect x="30" y="40" width="40" height="25" rx="6" fill="#1F2937"/>
-                    <circle cx="40" cy="52" r="4" fill="white"/>
-                    <circle cx="60" cy="52" r="4" fill="white"/>
-                    <path d="M 45 30 L 45 15" stroke="var(--mascot-stroke)" stroke-width="3"/>
-                    <circle cx="45" cy="12" r="5" fill="#F472B6"/>
-                </svg>
-                <h3 style="margin-bottom: 4px;">Master Atemo</h3>
-                <p style="color:var(--text-muted); font-size:0.9rem;">"What shall we learn?"</p>
-            </div>
-        </div>
-
-        <div class="section-header">
-            <div class="section-title">Jump back in</div>
-            <button class="btn btn-ghost" onclick="openCreator()">+ New Deck</button>
-        </div>
-
-        <div class="deck-list" id="deckContainer">
-            </div>
-
-    </main>
-
-    <div class="graffiti" id="graffitiText">COMBO!</div>
-
-    <div class="modal-overlay" id="createModal">
-        <div class="modal-content">
-            <h2 style="margin-top:0;">Create New Deck</h2>
-            
-            <label style="display:block; font-weight:600; margin-bottom:8px;">Deck Name</label>
-            <input type="text" id="deckName" placeholder="e.g. History Final" style="width:100%; padding:14px; border-radius:12px; border:2px solid var(--border); background:var(--bg); margin-bottom:20px; color:var(--text-main);">
-
-            <div style="border:3px dashed var(--border); border-radius:20px; padding:32px; text-align:center; cursor:pointer; transition:0.2s;" onclick="document.getElementById('pdfInput').click()" id="uploadBox">
-                <div style="font-size:2.5rem; margin-bottom:10px;">📄</div>
-                <div>Upload PDF</div>
-                <div style="font-size:0.85rem; color:var(--text-muted);">or click to paste text</div>
-                <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
-            </div>
-            
-            <textarea id="pasteArea" style="display:none; width:100%; height:120px; border-radius:12px; border:2px solid var(--border); padding:12px; margin-bottom:20px; background:var(--bg); color:var(--text-main);" placeholder="Paste text here..."></textarea>
-            
-            <div style="margin-top:10px; text-align:center;">
-                <span style="color:var(--accent); font-weight:600; cursor:pointer; font-size:0.9rem;" onclick="togglePaste()">Switch to Text/PDF</span>
-            </div>
-
-            <div style="margin-top:32px; display:flex; gap:12px;">
-                <button class="btn btn-primary" onclick="processAndSave()">Create Deck</button>
-                <button class="btn btn-ghost" onclick="closeModal('createModal')">Cancel</button>
-            </div>
-        </div>
+  <nav class="sidebar">
+    <div class="brand">
+      <span style="color:var(--brand-purple); font-size:2rem;">⚡</span>
+      Atemo
+      <small id="schemaPill">v8</small>
     </div>
 
-    <div class="modal-overlay" id="configModal">
-        <div class="modal-content">
-            <h2 style="margin-top:0;">Start Session</h2>
-            <p style="color:var(--text-muted); margin-bottom:24px;">How many questions do you want?</p>
-            
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
-                <span>Questions</span>
-                <span id="qRangeVal" style="color:var(--accent)">10</span>
-            </div>
-            <input type="range" min="5" max="20" value="10" style="width:100%; margin-bottom:32px; accent-color:var(--primary);" oninput="document.getElementById('qRangeVal').innerText = this.value">
-            
-            <button class="btn btn-primary" id="startBtn" onclick="launchQuiz()">Start Quiz 🚀</button>
-        </div>
+    <div class="cta-btn" onclick="openModal('createModal')">+ Create Deck</div>
+
+    <div class="nav-item active" onclick="switchView('progress')" id="nav-progress">
+      <div class="nav-icon">🔥</div> Progress
+    </div>
+    <div class="nav-item" onclick="switchView('decks')" id="nav-decks">
+      <div class="nav-icon">📂</div> My decks
+    </div>
+    <div class="nav-item" onclick="switchView('public')" id="nav-public">
+      <div class="nav-icon">🌎</div> Public decks
+    </div>
+    <div class="nav-item" onclick="switchView('profile')" id="nav-profile">
+      <div class="nav-icon">👤</div> Profile
     </div>
 
-    <div class="quiz-view" id="quizView">
-        <div style="max-width:800px; margin:0 auto; width:100%;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
-                <button class="btn btn-ghost" onclick="exitQuiz()">✕ Exit</button>
-                <div style="font-weight:700; color:var(--text-muted);" id="qProgress">1 / 10</div>
-            </div>
+    <div class="section-label">
+      <span>My Decks</span>
+      <span class="badge"><span id="deckCount">0</span></span>
+    </div>
+    <input id="deckSearch" class="sidebar-search" placeholder="Search decks..." oninput="renderSidebar()"/>
 
-            <div class="quiz-card">
-                <h2 id="qText" style="font-size:1.4rem; line-height:1.5; margin-bottom:32px;">Question loading...</h2>
-                <div id="optsContainer"></div>
+    <div id="sidebarDeckList" class="deck-list-wrap"></div>
 
-                <div id="tutorBox" style="display:none; background:var(--mascot-bg); border:1px solid var(--mascot-stroke); padding:20px; border-radius:16px; margin-top:24px;">
-                    <strong style="color:var(--mascot-stroke)">💡 Tutor Insight:</strong>
-                    <p id="tutorMsg" style="margin:8px 0 0 0; line-height:1.6;">Explanation...</p>
-                </div>
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span>Theme</span>
+      <span id="themeIcon">☀️</span>
+    </div>
+  </nav>
 
-                <div style="display:flex; gap:12px; margin-top:24px;">
-                    <button class="btn btn-ghost" id="explainBtn" style="display:none; color:var(--primary);" onclick="getExplanation()">Explain Why?</button>
-                    <button class="btn btn-primary" id="nextBtn" style="display:none; width:auto;" onclick="nextQuestion()">Next Question ➡️</button>
-                </div>
-            </div>
+  <main class="main-area">
+    <div class="level-header">
+      <div class="level-badge">
+        <span style="font-size:.62rem; text-transform:uppercase; font-weight:950; opacity:.85;">Lvl</span>
+        <span id="levelDisplay">1</span>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex; justify-content:space-between; font-weight:900; font-size:.95rem; margin-bottom:8px; letter-spacing:.2px;">
+          <span id="userTitle">Novice</span>
+          <span style="color:var(--brand-green);"><span id="xpDisplay">0</span> XP</span>
         </div>
+        <div class="progress-track"><div class="progress-fill" id="xpBar"></div></div>
+      </div>
     </div>
 
-    <script>
-        // --- 1. CORE ENGINE & CONFIG ---
-        const API_KEY = "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";
-        const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
+    <!-- PROGRESS -->
+    <div id="view-progress" class="view-section active">
+      <div class="dashboard-grid">
+        <div>
+          <div class="card">
+            <div class="streak-container">
+              <div>
+                <h2 style="margin:0; font-family:'Fredoka'; font-size:1.6rem; letter-spacing:-0.5px;">
+                  Keep your <span id="streakNum">0</span> day streak!
+                </h2>
+                <p style="color:var(--text-secondary); margin-top:5px; font-weight:550;">
+                  Complete a session to ignite the flame.
+                </p>
+              </div>
+              <div class="fire-ring">
+                <div style="font-size:3.5rem; animation: pop 2s infinite ease-in-out;">🔥</div>
+              </div>
+            </div>
 
-        // --- 2. SOUND SYNTHESIZER (No external files) ---
-        function playSound(type) {
-            if(AUDIO_CTX.state === 'suspended') AUDIO_CTX.resume();
-            const osc = AUDIO_CTX.createOscillator();
-            const gain = AUDIO_CTX.createGain();
-            osc.connect(gain); gain.connect(AUDIO_CTX.destination);
+            <div class="calendar-row" id="calendarGrid"></div>
+            <button class="cta-btn" style="width:100%; margin-top:22px; background:var(--brand-dark);" onclick="resumeSession()">Keep your streak</button>
+          </div>
 
-            const now = AUDIO_CTX.currentTime;
-            
-            if(type === 'correct') {
-                // Happy high chime
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(500, now);
-                osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                osc.start(now); osc.stop(now + 0.5);
-            } else if (type === 'wrong') {
-                // Low thud
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.linearRampToValueAtTime(100, now + 0.2);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now); osc.stop(now + 0.3);
-            } else if (type === 'pop') {
-                // UI click
-                osc.frequency.setValueAtTime(800, now);
-                gain.gain.setValueAtTime(0.05, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-                osc.start(now); osc.stop(now + 0.1);
-            }
+          <h3 style="color:var(--text-secondary); font-size:0.85rem; text-transform:uppercase; font-weight:950; letter-spacing:0.5px; margin-bottom:12px;">
+            Jump back in
+          </h3>
+
+          <div id="resumeCard" class="resume-card" onclick="resumeSession()" style="display:none;">
+            <div style="display:flex; gap:16px; align-items:center;">
+              <div class="level-badge" style="background:#DCFCE7; color:#15803D; box-shadow:none; transform:none; font-size:1.5rem; width:48px; height:48px;">▶</div>
+              <div>
+                <div style="font-weight:850; font-size:1.1rem; color:#14532D;" id="resumeTitle">Biology 101</div>
+                <div style="color:#15803D; font-size:0.9rem; font-weight:600;">Continue where you left off</div>
+              </div>
+            </div>
+            <div style="font-weight:900; color:#15803D; background:white; padding:6px 12px; border-radius:10px;">Resume</div>
+          </div>
+
+          <div id="emptyResume" class="empty-dash" onclick="openModal('createModal')" style="display:none;">
+            <div style="font-size:3rem; margin-bottom:10px;">✨</div>
+            <div style="font-weight:850; color:var(--text-primary); margin-bottom:4px;">Start your journey</div>
+            <div style="font-size:0.9rem;">Create your first deck to begin learning</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card groups-card" style="text-align:center; padding: 30px;">
+            <div class="avatars-stack">
+              <div class="avatar-circle">🐨<div class="live-dot"></div></div>
+              <div class="avatar-circle" style="background:#DDD6FE;">👽</div>
+              <div class="avatar-circle" style="background:#FEF3C7;">🐵</div>
+              <div class="avatar-circle" style="background:#D1FAE5;">🐸</div>
+            </div>
+            <h3 style="margin:0 0 5px 0; font-size:1.1rem;">Study with friends</h3>
+            <p style="color:var(--text-secondary); font-size:0.9rem; margin:0 0 16px 0;">3 friends online now</p>
+            <button class="cta-btn" style="width:100%; font-size:0.9rem; padding:10px; margin:0;" onclick="showNotification('Rooms coming soon!', 'info')">Join Room</button>
+          </div>
+
+          <div class="card">
+            <h3 style="margin:0 0 14px 0; font-size:1rem;">Your friends leaderboard</h3>
+            <div class="leaderboard-empty" style="text-align:center;">
+              <div style="font-size:2.5rem; margin-bottom:10px;">🏆</div>
+              <div style="font-weight:750; color:var(--text-secondary);">It's lonely at the top.</div>
+              <button class="cta-btn" style="background:var(--bg); color:var(--text-primary); margin-top:15px; box-shadow:none; border:1px solid var(--border);" onclick="showNotification('Invite link copied!', 'success')">Add friends</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECKS -->
+    <div id="view-decks" class="view-section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;">
+        <h2 style="font-family:'Fredoka'; margin:0;">My Collection</h2>
+        <button class="cta-btn" style="margin:0; padding:10px 20px;" onclick="openModal('createModal')">+ New</button>
+      </div>
+      <div class="decks-grid" id="allDecksGrid"></div>
+    </div>
+
+    <!-- PUBLIC -->
+    <div id="view-public" class="view-section">
+      <h2 style="font-family:'Fredoka'; margin-bottom:18px;">Explore Community Decks</h2>
+      <div class="decks-grid" id="publicDecksGrid"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="view-profile" class="view-section">
+      <div class="card" style="text-align:center; max-width:420px; margin:0 auto; padding:40px;">
+        <div style="width:120px; height:120px; background:var(--brand-dark); border-radius:50%; margin:0 auto 24px auto; display:flex; align-items:center; justify-content:center; font-size:4rem; box-shadow:var(--shadow-md); animation: floaty 2.2s infinite ease-in-out;">🦁</div>
+        <h2 style="margin:0; font-size:1.8rem;">Scholar</h2>
+        <p style="color:var(--text-secondary); font-weight:650;">Joined Feb 2026</p>
+        <hr class="sep">
+        <div style="display:flex; justify-content:space-around;">
+          <div><h3 style="margin:0; font-size:1.5rem;" id="profXP">0</h3><small style="color:var(--text-secondary); font-weight:850; text-transform:uppercase;">Total XP</small></div>
+          <div><h3 style="margin:0; font-size:1.5rem;" id="profDecks">0</h3><small style="color:var(--text-secondary); font-weight:850; text-transform:uppercase;">Decks</small></div>
+        </div>
+        <hr class="sep">
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <div class="chip" onclick="openModal('settingsModal')">⚙️ Settings</div>
+          <div class="chip" onclick="resetAllConfirm()">🧨 Reset Data</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- CREATE MODAL -->
+  <div class="modal-overlay" id="createModal">
+    <div class="modal">
+      <h2>✨ Create New Deck</h2>
+      <p>Create decks from PDF, an image, YouTube transcript, or paste text.</p>
+
+      <input class="field" type="text" id="deckNameInput" placeholder="Deck Name (e.g. History Ch. 3)"/>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-pdf" onclick="switchCreateTab('pdf')">📄 PDF</div>
+        <div class="tab" id="tab-image" onclick="switchCreateTab('image')">🖼️ Image</div>
+        <div class="tab" id="tab-youtube" onclick="switchCreateTab('youtube')">▶️ YouTube</div>
+        <div class="tab" id="tab-text" onclick="switchCreateTab('text')">✍️ Text</div>
+      </div>
+
+      <!-- PDF -->
+      <div id="create-pdf">
+        <div id="uploadBox" class="upload-area" onclick="document.getElementById('pdfInput').click()">
+          <div style="font-size:2.5rem; margin-bottom:12px; opacity:0.9;">📄</div>
+          <div style="font-weight:900; color:var(--text-primary);">Click to upload PDF</div>
+          <div style="font-size:0.85rem; color:var(--text-secondary); margin-top:4px;">Max 5MB • PDF only</div>
+          <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
+        </div>
+      </div>
+
+      <!-- Image-to-Deck -->
+      <div id="create-image" style="display:none;">
+        <div class="upload-area" onclick="document.getElementById('imgInput').click()">
+          <div style="font-size:2.5rem; margin-bottom:12px; opacity:0.9;">🖼️</div>
+          <div style="font-weight:900;">Upload a photo of a textbook page</div>
+          <div style="font-size:0.85rem; color:var(--text-secondary); margin-top:4px;">OCR will extract text (English)</div>
+          <input type="file" id="imgInput" accept="image/*" style="display:none;">
+        </div>
+        <div style="margin-top:12px;" class="muted" id="ocrStatus"></div>
+      </div>
+
+      <!-- YouTube-to-Deck -->
+      <div id="create-youtube" style="display:none;">
+        <input class="field" type="text" id="ytLink" placeholder="YouTube link (optional)"/>
+        <div style="height:10px;"></div>
+        <textarea class="field" id="ytTranscript" placeholder="Paste transcript here (recommended for best results)" style="min-height:130px; resize:vertical;"></textarea>
+        <div class="muted" style="margin-top:8px;">Tip: If you only paste a link, transcripts may fail due to browser restrictions. Transcript paste = guaranteed.</div>
+      </div>
+
+      <!-- Text -->
+      <div id="create-text" style="display:none;">
+        <textarea class="field" id="rawTextInput" placeholder="Paste notes / chapter text here..." style="min-height:160px; resize:vertical;"></textarea>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:20px;">
+        <button class="cta-btn" style="flex:1; background:var(--bg); color:var(--text-primary); border:2px solid var(--border); box-shadow:none;" onclick="closeModal('createModal')">Cancel</button>
+        <button class="cta-btn" style="flex:1; margin:0;" onclick="saveDeck()">Create Deck</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ SETUP -->
+  <div class="modal-overlay" id="setupModal">
+    <div class="modal">
+      <h2>🚀 Quiz Setup</h2>
+      <p id="setupDeckName">Deck: Biology</p>
+
+      <div style="margin: 26px 0 10px 0;">
+        <div style="display:flex; justify-content:space-between; font-weight:900; font-size:1.05rem;">
+          <span>Number of Questions</span>
+          <span id="qCountVal" style="color:var(--brand-purple);">10</span>
+        </div>
+        <input type="range" id="qSlider" min="5" max="30" step="5" value="10" oninput="document.getElementById('qCountVal').innerText=this.value">
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-secondary); font-weight:850;">
+          <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between; margin-top: 6px;">
+        <div class="chip" onclick="toggleSoundscape()">
+          🎧 Soundscape <small id="soundscapeLabel">Off</small>
+        </div>
+        <div class="chip" onclick="toggleVoiceMode()">
+          🎙️ Voice <small id="voiceLabel">Off</small>
+        </div>
+        <div class="chip" onclick="toggleSrsOnly()">
+          🧠 SRS <small id="srsLabel">On</small>
+        </div>
+      </div>
+
+      <button class="cta-btn" style="width:100%; margin: 18px 0 0 0;" onclick="startQuiz()">Start Session</button>
+      <div style="text-align:center; margin-top:14px; cursor:pointer; color:var(--text-secondary); font-weight:850; font-size:0.9rem;" onclick="closeModal('setupModal')">Cancel</div>
+    </div>
+  </div>
+
+  <!-- TUTOR MODAL -->
+  <div class="modal-overlay" id="tutorModal">
+    <div class="modal">
+      <h2>🧑‍🏫 Tutor Mode</h2>
+      <p class="muted">Ask about the current card or the deck. You can also use voice.</p>
+
+      <div class="tutor-wrap">
+        <div id="chatlog" class="chatlog"></div>
+
+        <div class="chatrow">
+          <input id="chatInput" class="field" placeholder='Type: "I don’t get why the answer is B"' />
+          <button onclick="sendTutor()">Send</button>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div class="chip" onclick="speakLastAI()">🔊 Read reply</div>
+          <div class="chip" onclick="startVoiceTutor()">🎙️ Speak question</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:18px;">
+        <button class="cta-btn" style="flex:1; background:var(--bg); color:var(--text-primary); border:2px solid var(--border); box-shadow:none;" onclick="closeModal('tutorModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <h2>⚙️ Settings</h2>
+      <p class="muted">Small polish + study options.</p>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;">
+        <div class="chip" onclick="toggleSoundscape()">
+          🎧 Soundscape <small id="soundscapeLabel2">Off</small>
+        </div>
+        <div class="chip" onclick="toggleVoiceMode()">
+          🎙️ Voice <small id="voiceLabel2">Off</small>
+        </div>
+        <div class="chip" onclick="toggleSrsOnly()">
+          🧠 SRS <small id="srsLabel2">On</small>
+        </div>
+        <div class="chip" onclick="toggleHaptics()">
+          📳 Haptics <small id="hapticsLabel">On</small>
+        </div>
+      </div>
+
+      <hr class="sep" />
+
+      <div class="muted">
+        <div style="font-weight:900; margin-bottom:6px;">Data Health</div>
+        <div>Auto-fixes duplicated deck lists + repairs old saves on load.</div>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:18px;">
+        <button class="cta-btn" style="flex:1; background:var(--bg); color:var(--text-primary); border:2px solid var(--border); box-shadow:none;" onclick="closeModal('settingsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ VIEW -->
+  <div class="quiz-view" id="quizView">
+    <div class="quiz-header">
+      <button class="cta-btn" style="margin:0; padding:10px 18px; background:var(--bg); color:var(--text-primary); border:1px solid var(--border); box-shadow:none;" onclick="exitQuiz()">✕ Exit</button>
+
+      <div style="font-weight:900; color:var(--text-secondary);">
+        Question <span id="qIndex">1</span> / <span id="qTotal">10</span>
+        <span style="margin-left:10px; color:var(--text-secondary); font-weight:900;">•</span>
+        <span style="margin-left:10px; color:var(--brand-green); font-weight:950;">+<span id="qXpGain">0</span> XP</span>
+      </div>
+
+      <div class="right-tools">
+        <div class="chip" onclick="openTutor()">🧑‍🏫 Tutor</div>
+        <div class="chip" onclick="toggleSoundscape()">🎧 <small id="soundscapeLabel3">Off</small></div>
+        <div class="chip" onclick="toggleVoiceMode()">🎙️ <small id="voiceLabel3">Off</small></div>
+      </div>
+    </div>
+
+    <div class="quiz-body">
+      <div class="question-card" id="qCard">
+        <div id="qLoader" style="text-align:center; padding:60px;">
+          <div class="loader"></div>
+          <h3 style="margin-top:22px; font-family:'Fredoka';">Generating AI Questions...</h3>
+          <p style="color:var(--text-secondary); font-weight:650;">Analyzing your notes and crafting the perfect quiz.</p>
+        </div>
+
+        <div id="qContent" style="display:none;">
+          <h2 id="qText" style="font-size:1.8rem; line-height:1.35; margin-bottom:30px; font-weight:950; letter-spacing:-.4px;">Question Text?</h2>
+
+          <div id="optsContainer" class="opt-grid"></div>
+
+          <div id="feedback" style="margin-top:18px; padding:18px; background:var(--bg); border-left:4px solid var(--brand-green); color:var(--text-primary); display:none; border-radius:0 14px 14px 0;">
+            <strong style="display:block; margin-bottom:4px; color:var(--brand-green);">💡 Insight</strong>
+            <span id="feedbackText"></span>
+          </div>
+
+          <button id="nextBtn" class="cta-btn" style="float:right; margin-top:22px; width:auto; padding:14px 40px; display:none;" onclick="nextQuestion()">Next ➔</button>
+
+          <div style="clear:both;"></div>
+
+          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+            <div class="chip" onclick="readQuestion()">🔊 Read question</div>
+            <div class="chip" onclick="startVoiceAnswer()">🎙️ Answer by voice</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="endScreen" class="end-screen">
+    <div class="end-card">
+      <div class="end-inner">
+        <div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <div>
+              <div style="font-family:'Fredoka'; font-size:1.6rem; font-weight:900;">Session Complete!</div>
+              <div class="muted">Your XP is counting up…</div>
+            </div>
+            <div class="mascot">🦊</div>
+          </div>
+
+          <hr class="sep"/>
+
+          <div style="display:flex; gap:16px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+              <div class="muted">XP Earned</div>
+              <div class="xp-big">+<span id="xpEarnedCount">0</span></div>
+            </div>
+            <div style="margin-left:auto;">
+              <div class="muted">Score</div>
+              <div style="font-family:'Fredoka'; font-size:2rem; font-weight:900;"><span id="endScore">0</span>/<span id="endTotal">0</span></div>
+            </div>
+          </div>
+
+          <div class="end-actions">
+            <button class="cta-btn" style="background:var(--bg); color:var(--text-primary); border:1px solid var(--border); box-shadow:none;" onclick="closeEndScreen()">Back</button>
+            <button class="cta-btn" onclick="confettiBlast()">Celebrate 🎉</button>
+          </div>
+        </div>
+
+        <div style="text-align:center;">
+          <div style="font-weight:950; font-size:1.05rem;">Streak</div>
+          <div style="font-size:3rem; font-weight:950; margin-top:6px;">🔥 <span id="endStreak">0</span></div>
+          <div class="muted">Keep it going tomorrow</div>
+
+          <hr class="sep"/>
+
+          <div style="display:grid; gap:10px;">
+            <div style="padding:14px; border-radius:18px; border:1px solid var(--border); background: var(--bg);">
+              <div style="font-weight:950;">SRS Updated</div>
+              <div class="muted">Wrong cards show sooner</div>
+            </div>
+            <div style="padding:14px; border-radius:18px; border:1px solid var(--border); background: var(--bg);">
+              <div style="font-weight:950;">Bonus</div>
+              <div class="muted">Finish bonus included</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================
+    // CONFIG
+    // =====================
+    // NOTE: This key is visible in frontend. For real apps, move it server-side.
+    const API_KEY = "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";
+    const MODEL = "deepseek/deepseek-chat";
+    const STORAGE_NEW = "atemo_v8";
+    const STORAGE_OLD = "atemo_v7";
+
+    // =====================
+    // AUDIO ENGINE (SFX) + SOUNDscape
+    // =====================
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    let soundscape = {
+      on: false,
+      node: null,
+      gain: null,
+      noise: null,
+      lfo: null
+    };
+
+    function ensureAudio() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(type) {
+      ensureAudio();
+
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.1);
+        gainNode.gain.setValueAtTime(0.28, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+        gainNode.gain.setValueAtTime(0.26, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    }
+
+    // Simple lofi-ish soundscape: filtered noise + low sine + subtle LFO
+    function setSoundscape(on) {
+      ensureAudio();
+      if (on === soundscape.on) return;
+
+      if (!on) {
+        try {
+          soundscape.gain?.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
+          setTimeout(() => {
+            soundscape.node?.disconnect();
+            soundscape.gain?.disconnect();
+            soundscape.noise?.disconnect();
+            soundscape.lfo?.disconnect();
+            soundscape = { on:false, node:null, gain:null, noise:null, lfo:null };
+          }, 180);
+        } catch {}
+        soundscape.on = false;
+        syncToggles();
+        return;
+      }
+
+      // create
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.0;
+
+      // noise buffer
+      const bufferSize = 2 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) output[i] = (Math.random() * 2 - 1) * 0.35;
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      noise.loop = true;
+
+      // filter
+      const biquad = audioCtx.createBiquadFilter();
+      biquad.type = "lowpass";
+      biquad.frequency.value = 700;
+      biquad.Q.value = 0.7;
+
+      // subtle sine bass
+      const bass = audioCtx.createOscillator();
+      bass.type = "sine";
+      bass.frequency.value = 110;
+
+      const bassGain = audioCtx.createGain();
+      bassGain.gain.value = 0.04;
+
+      // LFO
+      const lfo = audioCtx.createOscillator();
+      lfo.type = "sine";
+      lfo.frequency.value = 0.12;
+
+      const lfoGain = audioCtx.createGain();
+      lfoGain.gain.value = 120;
+      lfo.connect(lfoGain);
+      lfoGain.connect(biquad.frequency);
+
+      // connect
+      noise.connect(biquad);
+      biquad.connect(gain);
+      bass.connect(bassGain);
+      bassGain.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      noise.start();
+      bass.start();
+      lfo.start();
+
+      // fade in
+      gain.gain.setTargetAtTime(0.12, audioCtx.currentTime, 0.12);
+
+      soundscape = { on:true, node:biquad, gain, noise, lfo };
+      syncToggles();
+    }
+
+    function toggleSoundscape() {
+      state.soundscapeOn = !state.soundscapeOn;
+      save();
+      setSoundscape(state.soundscapeOn);
+      showNotification(`Soundscape ${state.soundscapeOn ? "On" : "Off"}`, 'info');
+      haptic(10);
+    }
+
+    // =====================
+    // HAPTICS
+    // =====================
+    function haptic(ms=12){
+      if(!state.hapticsOn) return;
+      if (navigator.vibrate) navigator.vibrate(ms);
+    }
+
+    function toggleHaptics(){
+      state.hapticsOn = !state.hapticsOn;
+      save();
+      syncToggles();
+      showNotification(`Haptics ${state.hapticsOn ? "On" : "Off"}`, 'info');
+      haptic(18);
+    }
+
+    // =====================
+    // VOICE MODE (Web Speech)
+    // =====================
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognizer = null;
+
+    function toggleVoiceMode(){
+      state.voiceOn = !state.voiceOn;
+      save();
+      syncToggles();
+      showNotification(`Voice ${state.voiceOn ? "On" : "Off"}`, 'info');
+      haptic(10);
+    }
+
+    function speak(text){
+      try{
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 1.0;
+        u.pitch = 1.0;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }catch{}
+    }
+
+    function readQuestion(){
+      const q = session.questions[session.index];
+      if(!q) return;
+      speak(q.q + ". Options: " + q.options.map((o, idx)=> `${String.fromCharCode(65+idx)}: ${o}`).join(". "));
+      haptic(10);
+    }
+
+    function startVoiceAnswer(){
+      if(!state.voiceOn){
+        showNotification("Enable Voice first.", "error");
+        return;
+      }
+      if(!SpeechRecognition){
+        showNotification("Voice recognition not supported in this browser.", "error");
+        return;
+      }
+      const q = session.questions[session.index];
+      if(!q) return;
+
+      recognizer = new SpeechRecognition();
+      recognizer.lang = "en-US";
+      recognizer.interimResults = false;
+      recognizer.maxAlternatives = 1;
+
+      showNotification("Listening… say A / B / C / D", "info");
+      haptic(20);
+
+      recognizer.onresult = (e)=>{
+        const said = (e.results[0][0].transcript || "").trim().toLowerCase();
+        const map = { a:0, b:1, c:2, d:3, one:0, two:1, three:2, four:3 };
+        let pick = null;
+
+        if (said.includes("a")) pick = 0;
+        if (said.includes("b")) pick = 1;
+        if (said.includes("c")) pick = 2;
+        if (said.includes("d")) pick = 3;
+
+        // fallback by mapping
+        for(const k in map){
+          if(said === k) pick = map[k];
         }
 
-        // --- 3. STATE MANAGEMENT (Persistence) ---
-        let state = {
-            xp: 0,
-            streak: 1,
-            lastLogin: Date.now(),
-            decks: [], // { id, name, content, score, totalQuestions, lastPlayed }
-            theme: 'light'
-        };
+        if(pick === null || pick >= q.options.length){
+          showNotification(`Couldn't understand: "${said}"`, "error");
+          return;
+        }
 
-        // Load or Init
-        const saved = localStorage.getItem('atemo_v10');
-        if(saved) {
-            state = JSON.parse(saved);
-        } else {
-            // New user seed
-            state.decks.push({
-                id: Date.now(),
-                name: "Demo: Solar System",
-                content: "The Sun is a star. Jupiter is the largest planet. Mars is red due to iron oxide. Earth is the third planet.",
-                score: 0,
-                totalQuestions: 5,
-                lastPlayed: Date.now()
+        // click that option
+        const btn = document.querySelectorAll(".opt-btn")[pick];
+        if(btn) btn.click();
+      };
+
+      recognizer.onerror = ()=> showNotification("Voice error.", "error");
+      recognizer.start();
+    }
+
+    function startVoiceTutor(){
+      if(!state.voiceOn){
+        showNotification("Enable Voice first.", "error");
+        return;
+      }
+      if(!SpeechRecognition){
+        showNotification("Voice recognition not supported in this browser.", "error");
+        return;
+      }
+      recognizer = new SpeechRecognition();
+      recognizer.lang = "en-US";
+      recognizer.interimResults = false;
+      recognizer.maxAlternatives = 1;
+
+      showNotification("Listening… ask your question", "info");
+      haptic(20);
+
+      recognizer.onresult = (e)=>{
+        const said = (e.results[0][0].transcript || "").trim();
+        const input = document.getElementById("chatInput");
+        input.value = said;
+        sendTutor();
+      };
+      recognizer.onerror = ()=> showNotification("Voice error.", "error");
+      recognizer.start();
+    }
+
+    // =====================
+    // STATE
+    // =====================
+    let state = {
+      xp: 0,
+      streak: 0,
+      level: 1,
+      decks: [],
+      lastPlayedId: null,
+      theme: 'light',
+      schemaVersion: 8,
+
+      soundscapeOn: false,
+      voiceOn: false,
+      srsOnly: true,
+      hapticsOn: true,
+    };
+
+    let session = {
+      deckId: null,
+      questions: [],
+      index: 0,
+      score: 0,
+      earnedXP: 0,
+      lastGain: 0,
+      askedFromSRS: false
+    };
+
+    let tempPdfText = "";
+    let tempOcrText = "";
+
+    // =====================
+    // ERROR HANDLER & TOASTS
+    // =====================
+    window.onerror = function(msg, url, line) {
+      console.log("Captured error: " + msg);
+      return false;
+    };
+
+    function showNotification(msg, type='info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      const icon = type === 'success' ? '✅' : (type === 'error' ? '🛑' : 'ℹ️');
+      toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-msg">${msg}</div>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 280);
+      }, 2800);
+    }
+
+    // =====================
+    // SANITIZE + MIGRATE (prevents your duplicate deck list bug)
+    // =====================
+    function sanitizeState(raw){
+      const safe = raw && typeof raw === "object" ? raw : {};
+      if(!Array.isArray(safe.decks)) safe.decks = [];
+
+      safe.decks = safe.decks
+        .filter(d => d && typeof d === "object")
+        .map(d => {
+          if(!d.id || typeof d.id !== "number") d.id = Date.now() + Math.floor(Math.random()*1e6);
+          d.name = (d.name || "Untitled Deck").toString().trim();
+          d.content = (d.content || "").toString();
+          d.score = Number.isFinite(d.score) ? d.score : 0;
+          d.total = Number.isFinite(d.total) ? d.total : 0;
+          d.lastPlayed = Number.isFinite(d.lastPlayed) ? d.lastPlayed : Date.now();
+
+          if(d.cards && !Array.isArray(d.cards)) d.cards = [];
+          if(!d.cards) d.cards = [];
+
+          d.cards = d.cards
+            .filter(c => c && typeof c === "object")
+            .map(c => {
+              if(!c._id) c._id = Date.now() + Math.random();
+              if(!c.front) c.front = c.q || "";
+              if(!c.back) c.back = c.a || "";
+              // SRS fields
+              if(!c.srs) c.srs = { due: Date.now(), interval: 0, ease: 2.5, reps: 0, lapses: 0 };
+              if(!Number.isFinite(c.srs.due)) c.srs.due = Date.now();
+              if(!Number.isFinite(c.srs.interval)) c.srs.interval = 0;
+              if(!Number.isFinite(c.srs.ease)) c.srs.ease = 2.5;
+              if(!Number.isFinite(c.srs.reps)) c.srs.reps = 0;
+              if(!Number.isFinite(c.srs.lapses)) c.srs.lapses = 0;
+              return c;
             });
-        }
 
-        // Save Function
-        function dbSave() {
-            localStorage.setItem('atemo_v10', JSON.stringify(state));
-            renderDashboard();
-        }
-
-        // --- 4. RENDERERS ---
-        window.onload = () => {
-            applyTheme();
-            renderDashboard();
-            renderWeek();
-        };
-
-        function renderDashboard() {
-            document.getElementById('xpDisplay').innerText = state.xp;
-            document.getElementById('streakVal').innerText = state.streak;
-            
-            const list = document.getElementById('deckContainer');
-            list.innerHTML = '';
-
-            state.decks.forEach(deck => {
-                // Calculate percentage for ring
-                let pct = 0;
-                if(deck.totalQuestions > 0) {
-                    pct = Math.round((deck.score / deck.totalQuestions) * 100);
-                }
-
-                const div = document.createElement('div');
-                div.className = 'deck-item';
-                div.onclick = () => openConfig(deck.id);
-                div.innerHTML = `
-                    <div class="ring-container" style="--pct: ${pct*3.6}deg">
-                        <div class="ring-inner">${pct}%</div>
-                    </div>
-                    <div style="flex:1;">
-                        <h3 style="margin:0; font-size:1rem;">${deck.name}</h3>
-                        <div style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">
-                            Last Score: ${deck.score}/${deck.totalQuestions}
-                        </div>
-                    </div>
-                    <div style="color:var(--primary); font-weight:600; font-size:0.9rem;">Resume</div>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function renderWeek() {
-            const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-            const grid = document.getElementById('weekGrid');
-            grid.innerHTML = '';
-            
-            const today = new Date().getDay();
-            
-            days.forEach((d, i) => {
-                const col = document.createElement('div');
-                col.className = 'day-col';
-                // Logic: Highlight days up to today if streak is active
-                const isLit = i <= today; 
-                col.innerHTML = `
-                    <div class="fire-bubble ${isLit ? 'lit' : ''}">${isLit ? '🔥' : ''}</div>
-                    <div class="day-label">${d}</div>
-                `;
-                grid.appendChild(col);
-            });
-        }
-
-        // --- 5. PDF & TEXT ENGINE ---
-        let tempContent = "";
-        
-        document.getElementById('pdfInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if(!file) return;
-            
-            document.getElementById('uploadBox').innerHTML = `<div>⏳ Parsing...</div>`;
-            try {
-                const buffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(buffer).promise;
-                let fullText = "";
-                
-                // Limit parsing to first 5 pages for speed/token limits
-                for(let i=1; i<=Math.min(pdf.numPages, 5); i++){
-                    const page = await pdf.getPage(i);
-                    const txt = await page.getTextContent();
-                    fullText += txt.items.map(s=>s.str).join(" ");
-                }
-                tempContent = fullText;
-                document.getElementById('uploadBox').innerHTML = `<div style="font-size:2rem;">✅</div><div>PDF Ready</div>`;
-            } catch(err) {
-                alert("PDF Error: " + err.message);
-                document.getElementById('uploadBox').innerHTML = `<div>❌ Error</div>`;
-            }
+          return d;
         });
 
-        function togglePaste() {
-            const box = document.getElementById('uploadBox');
-            const area = document.getElementById('pasteArea');
-            if(area.style.display === 'none') {
-                area.style.display = 'block'; box.style.display = 'none';
-            } else {
-                area.style.display = 'none'; box.style.display = 'block';
+      // Dedupe by id
+      const byId = new Map();
+      for(const d of safe.decks){
+        if(!byId.has(d.id)) byId.set(d.id, d);
+        else{
+          const prev = byId.get(d.id);
+          const prevScore = (prev.content?.length||0) + (prev.cards?.length||0)*50 + (prev.lastPlayed||0)/1e9;
+          const newScore  = (d.content?.length||0) + (d.cards?.length||0)*50 + (d.lastPlayed||0)/1e9;
+          if(newScore > prevScore) byId.set(d.id, d);
+        }
+      }
+      safe.decks = Array.from(byId.values());
+
+      // Optional signature dedupe (prevents walls of identical names)
+      const sigSeen = new Set();
+      safe.decks = safe.decks.filter(d=>{
+        const sig = (d.name.toLowerCase() + "|" + (d.content||"").slice(0,200)).replace(/\s+/g," ").trim();
+        if(sigSeen.has(sig)) return false;
+        sigSeen.add(sig);
+        return true;
+      });
+
+      safe.xp = Number.isFinite(safe.xp) ? safe.xp : 0;
+      safe.streak = Number.isFinite(safe.streak) ? safe.streak : 0;
+      safe.level = Number.isFinite(safe.level) ? safe.level : 1;
+      safe.theme = (safe.theme === "dark" || safe.theme === "light") ? safe.theme : "light";
+
+      // prefs
+      safe.soundscapeOn = !!safe.soundscapeOn;
+      safe.voiceOn = safe.voiceOn ?? false;
+      safe.srsOnly = safe.srsOnly ?? true;
+      safe.hapticsOn = safe.hapticsOn ?? true;
+
+      safe.schemaVersion = 8;
+      return safe;
+    }
+
+    // =====================
+    // SAVE / LOAD
+    // =====================
+    function save(){
+      localStorage.setItem(STORAGE_NEW, JSON.stringify(state));
+      renderAll();
+    }
+
+    // =====================
+    // INIT
+    // =====================
+    window.onload = () => {
+      let loaded = null;
+
+      // prefer v8
+      if(localStorage.getItem(STORAGE_NEW)){
+        try{ loaded = JSON.parse(localStorage.getItem(STORAGE_NEW)); } catch {}
+      } else if(localStorage.getItem(STORAGE_OLD)){
+        // migrate v7 -> v8
+        try{ loaded = JSON.parse(localStorage.getItem(STORAGE_OLD)); } catch {}
+      }
+
+      state = sanitizeState(loaded || state);
+
+      document.documentElement.setAttribute('data-theme', state.theme || 'light');
+      document.getElementById('themeIcon').innerText = state.theme === 'dark' ? '🌙' : '☀️';
+      document.getElementById('schemaPill').innerText = "v" + (state.schemaVersion || 8);
+
+      updateXP();
+      save(); // IMPORTANT: persist sanitized state so duplicates never come back
+      setSoundscape(state.soundscapeOn);
+      syncToggles();
+      renderAll();
+    };
+
+    function syncToggles(){
+      const s = state.soundscapeOn ? "On" : "Off";
+      const v = state.voiceOn ? "On" : "Off";
+      const r = state.srsOnly ? "On" : "Off";
+      const h = state.hapticsOn ? "On" : "Off";
+
+      const ids = ["soundscapeLabel","soundscapeLabel2","soundscapeLabel3"];
+      ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.innerText = s; });
+
+      const vids = ["voiceLabel","voiceLabel2","voiceLabel3"];
+      vids.forEach(id=>{ const el=document.getElementById(id); if(el) el.innerText = v; });
+
+      const rids = ["srsLabel","srsLabel2"];
+      rids.forEach(id=>{ const el=document.getElementById(id); if(el) el.innerText = r; });
+
+      const hel = document.getElementById("hapticsLabel");
+      if(hel) hel.innerText = h;
+    }
+
+    function toggleTheme(){
+      state.theme = state.theme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', state.theme);
+      document.getElementById('themeIcon').innerText = state.theme === 'dark' ? '🌙' : '☀️';
+      save();
+      haptic(12);
+    }
+
+    function toggleSrsOnly(){
+      state.srsOnly = !state.srsOnly;
+      save();
+      syncToggles();
+      showNotification(`SRS ${state.srsOnly ? "On" : "Off"}`, "info");
+      haptic(10);
+    }
+
+    // =====================
+    // RENDER
+    // =====================
+    function renderAll(){
+      renderSidebar();
+      renderDashboard();
+      renderGrid("allDecksGrid", state.decks);
+      renderPublic();
+      renderProfile();
+    }
+
+    function updateXP(){
+      state.level = Math.max(1, Math.floor(Math.sqrt(state.xp / 130)));
+      document.getElementById('xpDisplay').innerText = state.xp.toLocaleString();
+      document.getElementById('levelDisplay').innerText = state.level;
+
+      const currentLevelXP = Math.pow(state.level, 2) * 130;
+      const nextLevelXP = Math.pow(state.level + 1, 2) * 130;
+      const progress = ((state.xp - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
+      document.getElementById('xpBar').style.width = Math.max(5, progress) + "%";
+
+      const titles = ["Novice","Apprentice","Scholar","Sage","Master"];
+      document.getElementById('userTitle').innerText = titles[Math.min(4, Math.floor(state.level/5))];
+    }
+
+    function renderSidebar(){
+      const list = document.getElementById('sidebarDeckList');
+      list.innerHTML = '';
+
+      const q = (document.getElementById('deckSearch').value || "").toLowerCase().trim();
+      const decks = q ? state.decks.filter(d => (d.name||"").toLowerCase().includes(q)) : state.decks;
+
+      document.getElementById("deckCount").innerText = state.decks.length;
+
+      if(decks.length === 0){
+        list.innerHTML = `<div style="padding:10px 12px; color:var(--text-secondary); font-size:0.88rem; font-weight:750;">No decks found.</div>`;
+        return;
+      }
+
+      decks.forEach(d=>{
+        const pct = d.total > 0 ? (d.score/d.total) : 0;
+        let color = "#CBD5E1";
+        if(pct > 0.8) color = "#22C55E";
+        else if(pct > 0.4) color = "#F59E0B";
+        else if(pct > 0) color = "#3B82F6";
+
+        const active = (session.deckId === d.id) ? "active" : "";
+        list.innerHTML += `
+          <div class="deck-list-item ${active}" onclick="openSetup(${d.id})" title="${escapeHtml(d.name)}">
+            <div class="deck-dot" style="background:${color}"></div>
+            <span style="overflow:hidden; text-overflow:ellipsis;">${escapeHtml(d.name)}</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderDashboard(){
+      document.getElementById('streakNum').innerText = state.streak;
+
+      const cal = document.getElementById('calendarGrid');
+      cal.innerHTML = '';
+      const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+      const todayIdx = new Date().getDay();
+
+      days.forEach((d,i)=>{
+        let hit = false;
+        if(state.streak > 0 && i === todayIdx) hit = true;
+
+        cal.innerHTML += `
+          <div class="cal-day">
+            <span>${d}</span>
+            <div class="cal-bubble ${hit ? 'hit' : 'miss'}">${hit ? '🔥' : ''}</div>
+          </div>
+        `;
+      });
+
+      if(state.decks && state.decks.length > 0){
+        const recent = [...state.decks].sort((a,b)=>(b.lastPlayed||0)-(a.lastPlayed||0))[0];
+        document.getElementById('resumeCard').style.display = 'flex';
+        document.getElementById('emptyResume').style.display = 'none';
+        document.getElementById('resumeTitle').innerText = recent.name;
+        document.getElementById('resumeCard').onclick = ()=> openSetup(recent.id);
+      }else{
+        document.getElementById('resumeCard').style.display = 'none';
+        document.getElementById('emptyResume').style.display = 'block';
+      }
+    }
+
+    function renderGrid(elemId, deckList){
+      const grid = document.getElementById(elemId);
+      grid.innerHTML = '';
+
+      if(!deckList || deckList.length === 0){
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-secondary); font-weight:800;">Empty collection.</div>`;
+        return;
+      }
+
+      deckList.forEach(d=>{
+        const dueCount = countDueCards(d);
+        grid.innerHTML += `
+          <div class="deck-tile" onclick="openSetup(${d.id})">
+            <h3 style="margin:0; font-family:'Fredoka'; font-size:1.2rem;">${escapeHtml(d.name)}</h3>
+            <div style="color:var(--text-secondary); font-size:0.9rem; margin-top:6px; font-weight:700;">
+              Due now: <span style="color:var(--brand-purple); font-weight:950;">${dueCount}</span>
+            </div>
+            <div style="color:var(--text-secondary); font-size:0.85rem; margin-top:6px; font-weight:700;">
+              Last studied: ${new Date(d.lastPlayed || Date.now()).toLocaleDateString()}
+            </div>
+
+            <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-weight:950; color:var(--brand-blue); display:flex; align-items:center; gap:6px;">
+                Study Now <span>➔</span>
+              </div>
+              <div class="badge" title="Cards in deck">${(d.cards?.length || 0)}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderPublic(){
+      const mocks = [
+        {id: 901, name: "AP Psychology Terms", content: "Psychology content..."},
+        {id: 902, name: "Spanish 101 Vocabulary", content: "Spanish content..."},
+        {id: 903, name: "ReactJS Interview Prep", content: "Coding content..."},
+        {id: 904, name: "World Geography", content: "Geo content..."},
+      ];
+
+      const grid = document.getElementById("publicDecksGrid");
+      grid.innerHTML = '';
+
+      mocks.forEach(d=>{
+        grid.innerHTML += `
+          <div class="deck-tile" onclick="clonePublicDeck('${escapeHtml(d.name)}')">
+            <h3 style="margin:0; font-family:'Fredoka'; font-size:1.2rem;">${escapeHtml(d.name)}</h3>
+            <div style="color:var(--text-secondary); font-size:0.9rem; margin-top:6px; font-weight:700;">By Community</div>
+            <div style="margin-top:auto; font-weight:950; color:var(--brand-green); display:flex; align-items:center; gap:6px;">
+              + Clone Deck
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function clonePublicDeck(name){
+      const newDeck = {
+        id: Date.now(),
+        name: name,
+        content: "This is a cloned deck with sample content for demonstration.",
+        cards: [],
+        score: 0, total: 0,
+        lastPlayed: Date.now()
+      };
+      state.decks.unshift(newDeck);
+      save();
+      switchView('decks');
+      showNotification(`"${name}" added to collection!`, 'success');
+      haptic(14);
+    }
+
+    function renderProfile(){
+      document.getElementById('profXP').innerText = state.xp.toLocaleString();
+      document.getElementById('profDecks').innerText = state.decks ? state.decks.length : 0;
+    }
+
+    function switchView(viewName){
+      document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+      document.getElementById(`nav-${viewName}`).classList.add('active');
+
+      document.querySelectorAll('.view-section').forEach(el=>el.classList.remove('active'));
+      document.getElementById(`view-${viewName}`).classList.add('active');
+      haptic(10);
+    }
+
+    function resumeSession(){
+      if(state.decks && state.decks.length > 0){
+        const recent = [...state.decks].sort((a,b)=>(b.lastPlayed||0)-(a.lastPlayed||0))[0];
+        openSetup(recent.id);
+      } else {
+        openModal('createModal');
+      }
+    }
+
+    // =====================
+    // MODALS
+    // =====================
+    function openModal(id){
+      const el = document.getElementById(id);
+      el.style.display = 'flex';
+      setTimeout(()=> el.classList.add('show'), 10);
+      haptic(10);
+    }
+    function closeModal(id){
+      const el = document.getElementById(id);
+      el.classList.remove('show');
+      setTimeout(()=> el.style.display = 'none', 240);
+      haptic(10);
+    }
+
+    // =====================
+    // CREATE TABS
+    // =====================
+    let createTab = "pdf";
+    function switchCreateTab(which){
+      createTab = which;
+
+      ["pdf","image","youtube","text"].forEach(t=>{
+        document.getElementById("tab-"+t).classList.toggle("active", t===which);
+        document.getElementById("create-"+t).style.display = (t===which) ? "block" : "none";
+      });
+
+      haptic(10);
+    }
+
+    // =====================
+    // PDF INPUT
+    // =====================
+    document.getElementById('pdfInput').onchange = async (e)=>{
+      try{
+        const f = e.target.files[0];
+        if(!f) return;
+
+        document.getElementById('uploadBox').style.opacity = '0.6';
+        const buf = await f.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument(buf).promise;
+
+        let txt = "";
+        for(let i=1; i<=Math.min(pdf.numPages, 6); i++){
+          const page = await pdf.getPage(i);
+          txt += (await page.getTextContent()).items.map(s=>s.str).join(" ") + "\n";
+        }
+        tempPdfText = txt;
+
+        const box = document.getElementById('uploadBox');
+        box.style.opacity = '1';
+        box.style.borderColor = "#22C55E";
+        box.style.background = "var(--brand-green-light)";
+        box.innerHTML = `<div style="font-size:2rem; margin-bottom:5px;">✅</div><b style="color:#15803D;">Ready!</b>`;
+        showNotification("PDF processed!", 'success');
+        haptic(16);
+      } catch(err){
+        showNotification("Error processing PDF", 'error');
+        console.error(err);
+      }
+    };
+
+    // =====================
+    // IMAGE OCR
+    // =====================
+    document.getElementById('imgInput').onchange = async (e)=>{
+      const f = e.target.files[0];
+      if(!f) return;
+
+      const status = document.getElementById("ocrStatus");
+      status.innerText = "OCR running…";
+
+      try{
+        const imgURL = URL.createObjectURL(f);
+        const { data } = await Tesseract.recognize(imgURL, 'eng', {
+          logger: m => {
+            if(m.status === "recognizing text"){
+              status.innerText = `OCR: ${Math.round(m.progress*100)}%`;
             }
+          }
+        });
+        tempOcrText = (data.text || "").trim();
+        status.innerText = tempOcrText ? "✅ OCR ready!" : "OCR finished but no text found.";
+        showNotification("Image OCR complete!", "success");
+        haptic(18);
+      }catch(err){
+        console.error(err);
+        status.innerText = "OCR failed.";
+        showNotification("OCR failed.", "error");
+      }
+    };
+
+    // =====================
+    // SAVE DECK
+    // =====================
+    function saveDeck(){
+      const name = (document.getElementById('deckNameInput').value || "").trim();
+      if(!name) return showNotification("Please enter a deck name.", 'error');
+
+      let content = "";
+      if(createTab === "pdf"){
+        content = tempPdfText;
+        if(!content) return showNotification("Upload a PDF first.", 'error');
+      }
+      if(createTab === "image"){
+        content = tempOcrText;
+        if(!content) return showNotification("Upload an image and wait for OCR.", 'error');
+      }
+      if(createTab === "youtube"){
+        const t = (document.getElementById("ytTranscript").value || "").trim();
+        const link = (document.getElementById("ytLink").value || "").trim();
+        content = t || (link ? `YouTube link: ${link}\n(Transcript not provided. Please paste transcript for best results.)` : "");
+        if(!content) return showNotification("Paste transcript or add some text.", "error");
+      }
+      if(createTab === "text"){
+        content = (document.getElementById("rawTextInput").value || "").trim();
+        if(!content) return showNotification("Paste some text first.", "error");
+      }
+
+      const newDeck = {
+        id: Date.now(),
+        name,
+        content,
+        cards: [],
+        score: 0,
+        total: 0,
+        lastPlayed: Date.now()
+      };
+
+      state.decks.unshift(newDeck);
+      state.lastPlayedId = newDeck.id;
+
+      // reset temp inputs
+      tempPdfText = "";
+      tempOcrText = "";
+      document.getElementById("ocrStatus").innerText = "";
+      document.getElementById("deckNameInput").value = "";
+      document.getElementById("ytLink").value = "";
+      document.getElementById("ytTranscript").value = "";
+      document.getElementById("rawTextInput").value = "";
+
+      // reset PDF UI
+      const uploadBox = document.getElementById('uploadBox');
+      uploadBox.innerHTML = `
+        <div style="font-size:2.5rem; margin-bottom:12px; opacity:0.9;">📄</div>
+        <div style="font-weight:900; color:var(--text-primary);">Click to upload PDF</div>
+        <div style="font-size:0.85rem; color:var(--text-secondary); margin-top:4px;">Max 5MB • PDF only</div>
+        <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
+      `;
+      // rebind pdf input (because we replaced innerHTML)
+      const newPdfInput = uploadBox.querySelector("#pdfInput");
+      newPdfInput.onchange = document.getElementById('pdfInput').onchange;
+      // fix the original reference
+      document.getElementById('pdfInput').remove();
+      newPdfInput.id = "pdfInput";
+      newPdfInput.accept = ".pdf";
+      newPdfInput.style.display = "none";
+
+      uploadBox.style.borderColor = "var(--border)";
+      uploadBox.style.background = "var(--bg)";
+
+      save();
+      closeModal('createModal');
+      showNotification("Deck created!", 'success');
+      switchView('decks');
+      haptic(18);
+    }
+
+    // =====================
+    // SRS (SM-2-ish)
+    // =====================
+    function ensureCardSRS(card){
+      if(!card.srs) card.srs = { due: Date.now(), interval: 0, ease: 2.5, reps: 0, lapses: 0 };
+      if(!Number.isFinite(card.srs.due)) card.srs.due = Date.now();
+      if(!Number.isFinite(card.srs.interval)) card.srs.interval = 0;
+      if(!Number.isFinite(card.srs.ease)) card.srs.ease = 2.5;
+      if(!Number.isFinite(card.srs.reps)) card.srs.reps = 0;
+      if(!Number.isFinite(card.srs.lapses)) card.srs.lapses = 0;
+    }
+
+    function scheduleSRS(card, wasCorrect){
+      ensureCardSRS(card);
+      const now = Date.now();
+      const s = card.srs;
+
+      if(!wasCorrect){
+        s.lapses += 1;
+        s.reps = Math.max(0, s.reps - 1);
+        s.interval = 0;                 // show again soon
+        s.ease = Math.max(1.3, s.ease - 0.2);
+        s.due = now + 2 * 60 * 1000;    // 2 minutes
+        return;
+      }
+
+      // correct
+      s.reps += 1;
+      // interval growth
+      if (s.reps === 1) s.interval = 1;       // 1 day
+      else if (s.reps === 2) s.interval = 3;  // 3 days
+      else s.interval = Math.round(s.interval * s.ease);
+
+      s.ease = Math.min(2.9, s.ease + 0.05);
+      s.due = now + s.interval * 24 * 60 * 60 * 1000;
+    }
+
+    function countDueCards(deck){
+      const now = Date.now();
+      const cards = deck.cards || [];
+      let due = 0;
+      for(const c of cards){
+        ensureCardSRS(c);
+        if(c.srs.due <= now) due++;
+      }
+      return due;
+    }
+
+    function pickDueCards(deck, count){
+      const now = Date.now();
+      const cards = (deck.cards || []).slice();
+      cards.forEach(ensureCardSRS);
+
+      const due = cards.filter(c => c.srs.due <= now);
+      due.sort((a,b)=> (a.srs.due - b.srs.due) || (a.srs.interval - b.srs.interval));
+      return due.slice(0, count);
+    }
+
+    // =====================
+    // QUIZ
+    // =====================
+    function openSetup(deckId){
+      const deck = state.decks.find(x=>x.id===deckId);
+      if(!deck) return;
+      session.deckId = deckId;
+      document.getElementById('setupDeckName').innerText = "Deck: " + deck.name;
+      openModal('setupModal');
+      haptic(10);
+    }
+
+    async function startQuiz(){
+      closeModal('setupModal');
+
+      const qCount = Number(document.getElementById('qSlider').value || 10);
+      const deck = state.decks.find(x=>x.id===session.deckId);
+      if(!deck) return;
+
+      deck.lastPlayed = Date.now();
+      state.lastPlayedId = deck.id;
+      save();
+
+      session.index = 0;
+      session.score = 0;
+      session.earnedXP = 0;
+      session.lastGain = 0;
+      session.askedFromSRS = false;
+
+      document.getElementById('quizView').style.display='flex';
+      document.getElementById('qLoader').style.display='block';
+      document.getElementById('qContent').style.display='none';
+      document.getElementById('qTotal').innerText = qCount;
+      document.getElementById('qXpGain').innerText = "0";
+
+      // soundscape state
+      setSoundscape(state.soundscapeOn);
+
+      // If SRS only and we have enough due cards, build session from due cards (no API)
+      const dueCards = pickDueCards(deck, qCount);
+
+      if(state.srsOnly && dueCards.length >= Math.min(5, qCount)){
+        session.askedFromSRS = true;
+        session.questions = dueCards.map(c => ({
+          _cardId: c._id,
+          q: c.front || c.q || "Card",
+          options: (c.options && Array.isArray(c.options) ? c.options : null),
+          answer: (Number.isFinite(c.answer) ? c.answer : 0),
+          why: c.why || c.back || c.a || ""
+        }));
+
+        // If options missing, turn into short-answer-style multiple choice quickly
+        session.questions = session.questions.map(q=>{
+          if(q.options && q.options.length >= 2) return q;
+          const correct = q.why || q.answerText || "Answer";
+          const distractors = [
+            "Not this",
+            "A different concept",
+            "Opposite idea",
+            "Unrelated detail"
+          ];
+          return {
+            ...q,
+            options: [correct, ...distractors].slice(0,4),
+            answer: 0,
+            why: q.why || correct
+          };
+        });
+
+        renderQuestion();
+        return;
+      }
+
+      // Otherwise use AI generation
+      const prompt = `
+Generate exactly ${qCount} multiple choice questions from the text below.
+Return ONLY raw JSON array:
+[{"q":"...","options":["A","B","C","D"],"answer":0,"why":"short explanation"}]
+No markdown. No extra text.
+
+TEXT:
+${deck.content.substring(0, 4500)}
+      `.trim();
+
+      try{
+        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method:"POST",
+          headers:{
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role:"user", content: prompt }]
+          })
+        });
+
+        if(!res.ok){
+          const err = await res.json().catch(()=>({}));
+          throw new Error(err.error?.message || "API failed");
         }
 
-        function processAndSave() {
-            const name = document.getElementById('deckName').value || "Untitled Deck";
-            if(document.getElementById('pasteArea').value) tempContent = document.getElementById('pasteArea').value;
-            
-            if(!tempContent || tempContent.length < 10) return alert("Please provide content!");
+        const json = await res.json();
+        const content = json.choices?.[0]?.message?.content || "";
 
-            state.decks.unshift({
-                id: Date.now(),
-                name: name,
-                content: tempContent,
-                score: 0,
-                totalQuestions: 0,
-                lastPlayed: Date.now()
-            });
-            
-            dbSave();
-            closeModal('createModal');
-            tempContent = "";
-            document.getElementById('deckName').value = "";
-            document.getElementById('pasteArea').value = "";
-            document.getElementById('uploadBox').innerHTML = `<div style="font-size:2.5rem; margin-bottom:10px;">📄</div><div>Upload PDF</div><div style="font-size:0.85rem; color:var(--text-muted);">or click to paste text</div>`;
+        const startIndex = content.indexOf('[');
+        const endIndex = content.lastIndexOf(']');
+        if(startIndex === -1 || endIndex === -1) throw new Error("AI response format error");
+
+        const jsonString = content.substring(startIndex, endIndex + 1);
+        session.questions = JSON.parse(jsonString);
+
+        // Convert generated questions into cards and attach to deck (Magic Creation -> deck cards)
+        // This makes SRS real over time.
+        for(const q of session.questions){
+          const card = {
+            _id: Date.now() + Math.random(),
+            front: q.q,
+            back: q.why || "",
+            options: q.options,
+            answer: q.answer,
+            why: q.why || "",
+            srs: { due: Date.now(), interval: 0, ease: 2.5, reps: 0, lapses: 0 }
+          };
+          deck.cards.push(card);
         }
 
-        // --- 6. AI & GAME LOOP ---
-        let currentDeckId = null;
-        let gameData = { questions: [], idx: 0, score: 0, combo: 0 };
+        save(); // keep the new cards
+        renderQuestion();
 
-        function openConfig(id) {
-            currentDeckId = id;
-            document.getElementById('configModal').classList.add('open');
-            document.getElementById('configModal').style.display = 'flex';
+      }catch(e){
+        showNotification(`AI Error: ${e.message}`, 'error');
+        exitQuiz();
+      }
+    }
+
+    function renderQuestion(){
+      const q = session.questions[session.index];
+      document.getElementById('qLoader').style.display='none';
+      document.getElementById('qContent').style.display='block';
+      document.getElementById('qCard').classList.remove('shake');
+
+      document.getElementById('qIndex').innerText = session.index + 1;
+      document.getElementById('qText').innerText = q.q || "Question";
+
+      document.getElementById('feedback').style.display='none';
+      document.getElementById('nextBtn').style.display='none';
+
+      const cont = document.getElementById('optsContainer');
+      cont.innerHTML = '';
+
+      const opts = Array.isArray(q.options) ? q.options : [];
+      opts.forEach((opt, i)=>{
+        const btn = document.createElement('div');
+        btn.className = 'opt-btn';
+        btn.innerHTML = `<span>${escapeHtml(opt)}</span><span>${String.fromCharCode(65+i)}</span>`;
+        btn.onclick = ()=> checkAnswer(i, btn);
+        cont.appendChild(btn);
+      });
+
+      // If voice on, show quick hint once
+      if(state.voiceOn){
+        setTimeout(()=> showNotification("Tip: press “Answer by voice” and say A/B/C/D", "info"), 350);
+      }
+
+      haptic(10);
+    }
+
+    function getCardForQuestion(q){
+      const deck = state.decks.find(x=>x.id===session.deckId);
+      if(!deck) return null;
+
+      // if came from SRS list, match by _cardId
+      if(q._cardId){
+        return deck.cards.find(c => c._id === q._cardId) || null;
+      }
+
+      // otherwise match by front
+      return deck.cards.find(c => (c.front || "") === (q.q || "")) || null;
+    }
+
+    function checkAnswer(i, btn){
+      const q = session.questions[session.index];
+      const all = document.querySelectorAll('.opt-btn');
+      all.forEach(b => { b.style.pointerEvents='none'; b.style.opacity='0.65'; });
+
+      const correct = (i === q.answer);
+      const deck = state.decks.find(x=>x.id===session.deckId);
+      const card = getCardForQuestion(q);
+
+      // XP rules
+      let gain = 0;
+      if(correct){
+        gain = 20;
+        playSound('correct');
+        btn.className += ' correct';
+        btn.innerHTML = `<span>${escapeHtml(q.options[i])}</span><span>✅</span>`;
+        btn.style.opacity='1';
+        session.score++;
+        confetti({ particleCount: 50, origin: { y: 0.6 } });
+        haptic(18);
+      } else {
+        gain = 5;
+        playSound('wrong');
+        document.getElementById('qCard').classList.add('shake');
+        btn.className += ' wrong';
+        btn.innerHTML = `<span>${escapeHtml(q.options[i])}</span><span>❌</span>`;
+        btn.style.opacity='1';
+
+        const correctBtn = all[q.answer];
+        if(correctBtn){
+          correctBtn.className += ' correct';
+          correctBtn.innerHTML = `<span>${escapeHtml(q.options[q.answer])}</span><span>✅</span>`;
+          correctBtn.style.opacity='1';
+        }
+        haptic(26);
+      }
+
+      // SRS update (WRONG shows sooner)
+      if(card){
+        scheduleSRS(card, correct);
+      }
+
+      // Feedback
+      if(q.why){
+        document.getElementById('feedbackText').innerText = q.why;
+        document.getElementById('feedback').style.display='block';
+      }
+
+      // XP apply now
+      session.lastGain = gain;
+      session.earnedXP += gain;
+      state.xp += gain;
+      updateXP();
+
+      document.getElementById('qXpGain').innerText = gain;
+
+      // Persist deck totals
+      if(deck){
+        deck.total = Math.max(deck.total || 0, session.questions.length);
+        deck.score = Math.max(deck.score || 0, session.score);
+      }
+      save();
+
+      document.getElementById('nextBtn').style.display='block';
+    }
+
+    function nextQuestion(){
+      if(session.index < session.questions.length - 1){
+        session.index++;
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+      haptic(10);
+    }
+
+    function finishQuiz(){
+      const deck = state.decks.find(x=>x.id===session.deckId);
+      if(deck){
+        deck.score = Math.max(deck.score, session.score);
+        deck.total = session.questions.length;
+      }
+
+      // streak + bonus
+      state.streak += 1;
+      const bonus = 50;
+      state.xp += bonus;
+      session.earnedXP += bonus;
+
+      updateXP();
+      save();
+
+      playSound('correct');
+      showJuicyEndScreen(session.score, session.questions.length, session.earnedXP, state.streak);
+
+      // Close quiz view behind it
+      document.getElementById('quizView').style.display='none';
+      renderAll();
+    }
+
+    function exitQuiz(){
+      document.getElementById('quizView').style.display='none';
+      renderAll();
+      haptic(12);
+    }
+
+    // =====================
+    // JUICY END SCREEN
+    // =====================
+    function showJuicyEndScreen(score, total, earnedXP, streak){
+      const end = document.getElementById("endScreen");
+      document.getElementById("endScore").innerText = score;
+      document.getElementById("endTotal").innerText = total;
+      document.getElementById("endStreak").innerText = streak;
+
+      // Count-up
+      const target = Math.max(0, Math.floor(earnedXP));
+      const el = document.getElementById("xpEarnedCount");
+      el.innerText = "0";
+
+      end.style.display = "flex";
+      confettiBlast();
+      haptic(30);
+
+      const start = performance.now();
+      const duration = 1200;
+
+      function tick(now){
+        const t = Math.min(1, (now-start)/duration);
+        const val = Math.floor(target * (1 - Math.pow(1-t, 3))); // easeOutCubic
+        el.innerText = val.toLocaleString();
+        if(t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function closeEndScreen(){
+      document.getElementById("endScreen").style.display = "none";
+      renderAll();
+      haptic(14);
+    }
+
+    function confettiBlast(){
+      try{
+        confetti({ particleCount: 140, spread: 70, origin: { y: 0.6 } });
+        setTimeout(()=>confetti({ particleCount: 110, spread: 80, origin: { y: 0.55 } }), 220);
+      }catch{}
+      haptic(18);
+    }
+
+    // =====================
+    // TUTOR MODE (AI)
+    // =====================
+    let tutorLastAI = "";
+
+    function openTutor(){
+      const log = document.getElementById("chatlog");
+      log.innerHTML = "";
+      tutorLastAI = "";
+      pushChat("ai", "Tell me what’s confusing. Example: “I don’t get why the answer is B.”");
+      openModal("tutorModal");
+    }
+
+    function pushChat(who, text){
+      const log = document.getElementById("chatlog");
+      const div = document.createElement("div");
+      div.className = "bubble " + (who === "user" ? "user" : "ai");
+      div.textContent = text;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    async function sendTutor(){
+      const input = document.getElementById("chatInput");
+      const msg = (input.value || "").trim();
+      if(!msg) return;
+      input.value = "";
+
+      pushChat("user", msg);
+      haptic(10);
+
+      const deck = state.decks.find(x=>x.id===session.deckId) || null;
+      const q = session.questions?.[session.index] || null;
+
+      const context = `
+You are a friendly tutor. Explain simply (grade 9 level). Use steps. Keep it short but clear.
+If the user asks about an option (A/B/C/D), compare it to the correct answer.
+
+Deck name: ${deck ? deck.name : "N/A"}
+Current question: ${q ? q.q : "N/A"}
+Options: ${q && q.options ? JSON.stringify(q.options) : "N/A"}
+Correct index: ${Number.isFinite(q?.answer) ? q.answer : "N/A"}
+Explanation: ${q?.why || "N/A"}
+User message: ${msg}
+      `.trim();
+
+      try{
+        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method:"POST",
+          headers:{
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role:"user", content: context }]
+          })
+        });
+
+        if(!res.ok){
+          const err = await res.json().catch(()=>({}));
+          throw new Error(err.error?.message || "Tutor API failed");
         }
 
-        async function launchQuiz() {
-            const deck = state.decks.find(d => d.id === currentDeckId);
-            const count = document.getElementById('qRangeVal').innerText;
-            const btn = document.getElementById('startBtn');
-            
-            btn.disabled = true;
-            btn.innerText = "Generating Quiz... 🧠";
+        const json = await res.json();
+        const reply = json.choices?.[0]?.message?.content || "I couldn’t generate a reply.";
+        tutorLastAI = reply;
+        pushChat("ai", reply);
+        haptic(14);
+      }catch(e){
+        pushChat("ai", "Tutor error: " + e.message);
+      }
+    }
 
-            try {
-                const prompt = `Create exactly ${count} multiple choice questions. Return ONLY raw JSON array. Format: [{"q":"...","options":["..."],"answer":0}]. TEXT: ${deck.content.substring(0, 15000)}`;
-                
-                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json", "HTTP-Referer":"atemo.ai" },
-                    body: JSON.stringify({
-                        "model": "deepseek/deepseek-chat",
-                        "messages": [{"role": "user", "content": prompt}]
-                    })
-                });
+    function speakLastAI(){
+      if(!tutorLastAI) return showNotification("No reply yet.", "error");
+      speak(tutorLastAI);
+      haptic(10);
+    }
 
-                const data = await res.json();
-                let raw = data.choices[0].message.content;
-                
-                // ROBUST CLEANER: Strip markdown code blocks
-                raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
-                const start = raw.indexOf('[');
-                const end = raw.lastIndexOf(']');
-                
-                if(start === -1) throw new Error("AI output invalid");
-                
-                gameData.questions = JSON.parse(raw.substring(start, end+1));
-                gameData.idx = 0;
-                gameData.score = 0;
-                gameData.combo = 0;
+    // =====================
+    // RESET
+    // =====================
+    function resetAllConfirm(){
+      if(!confirm("Reset all Atemo data? This deletes decks, XP, streak.")) return;
+      localStorage.removeItem(STORAGE_NEW);
+      localStorage.removeItem(STORAGE_OLD);
+      location.reload();
+    }
 
-                // Close modal, open quiz
-                closeModal('configModal');
-                document.getElementById('quizView').style.display = 'flex';
-                renderQuestion();
-
-            } catch(e) {
-                alert("Generation failed: " + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Start Quiz 🚀";
-            }
-        }
-
-        function renderQuestion() {
-            const q = gameData.questions[gameData.idx];
-            document.getElementById('qProgress').innerText = `${gameData.idx + 1} / ${gameData.questions.length}`;
-            document.getElementById('qText').innerText = q.q;
-            
-            // Reset UI
-            document.getElementById('tutorBox').style.display = 'none';
-            document.getElementById('explainBtn').style.display = 'none';
-            document.getElementById('nextBtn').style.display = 'none';
-            
-            const cont = document.getElementById('optsContainer');
-            cont.innerHTML = '';
-
-            q.options.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerHTML = `<span>${opt}</span><span>⚪</span>`;
-                btn.onclick = () => checkAnswer(i, btn);
-                cont.appendChild(btn);
-            });
-        }
-
-        function checkAnswer(picked, btn) {
-            // Lock UI
-            const allBtns = document.querySelectorAll('.option-btn');
-            allBtns.forEach(b => b.disabled = true);
-
-            const q = gameData.questions[gameData.idx];
-            
-            if(picked === q.answer) {
-                // Correct
-                btn.classList.add('correct');
-                btn.children[1].innerText = '✅';
-                playSound('correct');
-                gameData.score++;
-                gameData.combo++;
-                state.xp += 10 + (gameData.combo * 5); // XP Bonus
-                
-                // Combo Logic
-                if(gameData.combo > 1) showGraffiti(`${gameData.combo}x COMBO!`);
-                else confetti({ particleCount: 30, origin: { y: 0.7 } });
-
-            } else {
-                // Wrong
-                btn.classList.add('wrong');
-                btn.children[1].innerText = '❌';
-                // Show Right
-                allBtns[q.answer].classList.add('correct');
-                allBtns[q.answer].children[1].innerText = '👈';
-                
-                playSound('wrong');
-                gameData.combo = 0;
-                document.getElementById('explainBtn').style.display = 'inline-block';
-            }
-
-            dbSave(); // Save XP updates
-            document.getElementById('nextBtn').style.display = 'inline-block';
-        }
-
-        async function getExplanation() {
-            const btn = document.getElementById('explainBtn');
-            btn.innerText = "Thinking...";
-            const q = gameData.questions[gameData.idx];
-            
-            try {
-                const prompt = `Explain briefly why option "${q.options[q.answer]}" is the correct answer to "${q.q}".`;
-                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json", "HTTP-Referer":"atemo.ai" },
-                    body: JSON.stringify({ "model": "deepseek/deepseek-chat", "messages": [{"role": "user", "content": prompt}] })
-                });
-                const data = await res.json();
-                document.getElementById('tutorMsg').innerText = data.choices[0].message.content;
-                document.getElementById('tutorBox').style.display = 'block';
-                btn.style.display = 'none';
-            } catch(e) {
-                alert("Tutor offline");
-            }
-        }
-
-        function nextQuestion() {
-            if(gameData.idx < gameData.questions.length - 1) {
-                gameData.idx++;
-                renderQuestion();
-            } else {
-                // End Game
-                const deck = state.decks.find(d => d.id === currentDeckId);
-                deck.score = gameData.score;
-                deck.totalQuestions = gameData.questions.length;
-                deck.lastPlayed = Date.now();
-                dbSave();
-                
-                confetti({ particleCount: 200, spread: 100 });
-                alert(`Session Complete!\nScore: ${gameData.score} / ${gameData.questions.length}\nXP Gained: ${gameData.score * 10}`);
-                exitQuiz();
-            }
-        }
-
-        // --- 7. UI UTILITIES ---
-        function showGraffiti(text) {
-            const el = document.getElementById('graffitiText');
-            el.innerText = text;
-            el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 1200);
-        }
-
-        function openCreator() {
-            document.getElementById('createModal').classList.add('open');
-            document.getElementById('createModal').style.display = 'flex';
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('open');
-            setTimeout(() => document.getElementById(id).style.display = 'none', 300);
-        }
-
-        function exitQuiz() {
-            document.getElementById('quizView').style.display = 'none';
-            renderDashboard(); // Refresh progress rings
-        }
-
-        function toggleTheme() {
-            state.theme = state.theme === 'light' ? 'dark' : 'light';
-            applyTheme();
-            dbSave();
-        }
-
-        function applyTheme() {
-            document.documentElement.setAttribute('data-theme', state.theme);
-        }
-        
-        function openShop() { alert("Shop coming in v11! Keep earning XP!"); }
-        function showDashboard() { document.getElementById('dashboardView').scrollTop = 0; }
-
-    </script>
+    // =====================
+    // HELPERS
+    // =====================
+    function escapeHtml(str){
+      return (str || "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+  </script>
 </body>
 </html>
-
